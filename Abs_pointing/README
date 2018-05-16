@@ -1,0 +1,311 @@
+
+
+This file describes celestial location monitoring routine.
+
+
+Dir: /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_abs_pointing.html
+
+#######
+cronjob
+#######
+
+on r2d2-v as mta:
+0 5 1,16  * *   cd /data/mta/Script/ALIGNMENT/Abs_pointing/Exc; /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/abs_pointing_wrap_script >> $HOME/Logs/position_aiming.cron 2>&1
+
+
+#########
+Directory 
+#########
+(see blow for more details)
+
+$bin_dir:	/data/mta/MTA/bin/					#---  a directory keeps all scripts
+$bdta_dir:	/data/mta/MTA/data/					#---  a directory keeps fundamental data
+$web_dir:	/data/mta/www/mta_aiming/				#---  a directory displays html pages
+$data_dir:	/data/mta/Script/ALIGNMENT/Abs_pointing/Data/		#---  a directory keeps resulted data
+$house_keeping:	/data/mta/Script/ALIGNMENT/Abs_pointing/house_keeping/	#---  a directory keeps files which track data processing
+
+
+############################
+Descriptions of perl scripts
+############################
+
+All perl scripts are in /data/mta/MTA/bin/
+ 
+------------------------
+abs_pointing_wrap_script
+------------------------
+
+A wrap script to run "abs_pointing_run_script"
+
+-----------------------
+abs_pointing_run_script
+-----------------------
+
+A driving script to run abs_pointing_main.perl (after setting the envirnment to .ascrc
+
+----------------------
+abs_pointing_main.perl
+----------------------
+	This is a control perl script. All other scripts are run through this script.
+	It also defines directory structures. If you want to change the directory structure
+	do so in this file.
+
+	You also need to email user name who will recieve email when coordinates are not
+	checked porperly (you can check it manually).
+
+	Input:	none
+
+	Output:	./dir_list:	a list of related directories.
+
+---------------------------------
+abs_pointing_find_candidate.perl 
+---------------------------------
+	This will read data from mp list, and select out potential candidates for further checks. 
+
+	Input:  /data/mta_www/mp_reports/events/mta_events.html
+				----- this contains a list of recent observations
+		./dir_list
+		
+	Output: ./candidate_list
+			content: <obsid> <target name> <instrument> <grating>
+				----- colon (:) delimited.
+
+	Note: this script needs to access SQL database
+
+-----------------------------
+abs_pointing_comp_entry.perl 
+-----------------------------
+	This compares a list of objects to already known objects with coordinates and creates 
+	another list for finding the positional offsets. If the object is not in the list, 
+	it creates an inquiry list to submit to SIMBAD so that we can find the coordinates.
+
+	Input: 
+		./dir_list
+		./candidate_list 
+
+	extra files needed:
+		in $bdata_dir/Abs_pointing/:
+		constellation --- a list of names of constellations in 3 letters
+		constellation2--- a list of names of constellations fully spelled out
+		in $house_keeping/:
+		coord_list    --- a previously observed object list and their coordinates
+		obsid_list    --- a list of the past observations checked
+
+	Output: 
+		./known_coord: a list of obsid with coordinates taken from the coord_list
+				content: <obsid> <instrument> <grating> <ra> <dec> <pm ra> <pm dec>
+		./check_coord: a list of obsid without known coordinates.
+		./simbad_list: a list of target names to be checked with SIMBAD
+			check_coord may contains several same target names (but different obsid),
+			but simbad_list contains target names only once.
+
+---------------------------------------
+abs_pointing_get_coord_from_simbad.perl
+---------------------------------------
+	This script extracts coordinates informaiton from SIMBAD database.
+
+	Input:
+		ARGV[0]: $user ---- a user name for email reciepiant
+		./dir_list
+		./check_coord
+		./simbad_list
+		./simbad_out:	a list of coordinates obtained from SIMBAD 
+					(created by abs_pointing_simbad_query.perl)
+
+		$bdata_dir/Query_mta.pm: a copy this file to the current direcotry.
+				        this one will be used by abs_pointing_simbad_query.perl.
+
+	Output:
+		$house_keeping/coord_list	added new coordinate information
+		./known_coord			added newly find obsid coordinates 
+		./unknown_coordiate		a list of targets which we could not identify
+
+	Script:	abs_pointing_simbad_query.perl
+			---- this must run with /usr/local/bin/perl5.8.6
+
+	Email:	if ./unkonwn_coordinate contains target names, send out email to $user
+
+------------------------------
+abs_pointing_simbad_query.perl
+------------------------------
+	This go to SIMBAD site and retrieve coordinates information.
+	This must be run with /usr/local/bin/perl5.8.6
+
+	Setting:
+		use Astro::SIMBAD;
+		use Query_mta;		---- this is modified specifically to abs_pointing
+		use Astro::SIMBAD::Result;
+		use Astro::SIMBAD::Result::Object;
+		use Data::Dumper;
+
+	Input:
+		./tag_name: a list of targets
+		
+	Output:
+		./simbad_out: coordinates list obtained from SIMBAD
+				content: <ra> <dec> <pm ra> <pm dec>
+				if coordinates are not obtained, it says "unprocessed"
+
+----------------------------------
+abs_pointing_comp_second_time.perl 
+----------------------------------
+	This compares a list of objects to already known objects with coordinates and creates
+	another list for finding the positional offsets. This is second round of check after checking
+	coordinates at SIMBAD. If we still cannot find the coordinates the observation will 
+	be drop from the further analysis
+
+	Input: 
+		./dir_list
+		$bdata_dir/Abs_pointing/constellation
+	       	$bdata_dir/Abs_pointing/coord_list
+	       	./check_coord --- format: name<t>obsid<t>inst<t>grat
+
+        output: known_coord
+		./new_obsid_list --- list of obsids
+
+-------------------------------
+abs_pointing_extract_obsid.perl 
+-------------------------------
+	This script updates obsid_list which lists already processed objects
+
+	Input: 
+		./dir_list
+	       	$hosue_keeping/obsid_list
+	       	./new_obsid_list
+		./known_coord
+
+	Output: 
+		./obsid_list 
+			updated obsid list which contains all previously tested obj
+
+-----------------------------------
+abs_pointing_compute_pos_diff.perl
+-----------------------------------
+	This reads a list of the point source and finds a location of the source
+	and finds difference between the position and those from SIMBAD
+	this script also opens up database with arc4gl and get evt1 files
+
+	Input:  
+		./dir_list
+		./known_coord
+		$bdata_dir/.dare
+		$bdata_dir/.hakama
+
+		level 1, evt fits files 
+
+	Output: 
+		$data_dir/Data/acis_s_data
+		$data_dir/Data/hrc_s_data
+		$data_dir/Data/hrc_i_data
+		content: <DOM> <obsid> <target name> <RA> <DEC> <RA difference> <DEC difference>
+
+	Function needed:
+		dmcopy, dmlist, wavdetect
+
+----------------------------
+abs_pointing_acis_plot.perl
+----------------------------
+	plot data and create gif files:
+	Input:
+		./dir_list
+		$data_dir/Data/acis_i_data
+	Output:
+		$web_dir/Fig_save/acis_point_err.gif
+
+	Function needed:
+		pnmflip, ppmtogif
+
+----------------------------
+abs_pointing_hrci_plot.perl
+----------------------------
+	plot data and create gif files:
+	Input:
+		./dir_list
+		$data_dir/Data/hrc_i_data
+	Output:
+		$web_dir/Fig_save/hrc_i_point_err.gif
+
+	Function needed:
+		pnmflip, ppmtogif
+
+----------------------------
+abs_pointing_hrcs_plot.perl
+----------------------------
+	plot data and create gif files:
+	Input:
+		./dir_list
+		$data_dir/Data/hrc_s_data
+	Output:
+		$web_dir/Fig_save/hrc_s_point_err.gif
+
+	Function needed:
+		pnmflip, ppmtogif
+
+----------------------------
+abs_pointing_print_html.perl
+----------------------------
+	create   html pages
+
+	Input:
+		./dir_list
+
+	Output:
+		$web_dir/aiming_page.html:	a main html page
+		$web_dir/acis_s_plot.html:	acis plot page
+		$web_dir/hrc_s_plot.html:	hrc-s plot page
+		$web_dir/hrc_i_plot.html:	hrc-i plot page
+
+
+##################
+directories/files
+##################
+
+$bdata_dir/Abs_pointing
+----------------------
+	Query_mta.pm:		SYMBAD query module used by perl (modified for MTA need)
+	constellation:		three letter constellation names
+	constellation2:		fully spelled constellation names
+
+$hosue_keeping
+--------------
+
+	coord_list:		coordinates of previously checked objects
+	obsid_list:		a list of previously checked obsids
+	unknown_coordiate	a list of unknown coordinate objects
+
+Temporary files created in a working directory
+---------------------------------------------
+
+	new_obsid_list-- newly processed objects list
+	known_coord ---  list of objects with known coordinates
+	check_coord ---- list of objects with unknown coordinates
+
+$data_dir/Data/
+--------------
+
+	rejected_list   ---- a list of objects which we could not get accurate postions, etc
+	acis_i_data	---- acis i data file
+	acis_s_data	---- acis s data file
+	hrc_i_data	---- hrc i data file
+	hrc_s_data	---- hrc s data file
+	format: <DOM> <obsid> <target name> <RA> <DEC> <RA difference> <DEC difference>
+					      in deg		in arc sec
+
+$web_dir/
+----------
+the data display web area. all data from ./Data are copied to here
+	http://asc.harvard.edu/mta_days/mta_aiming/aiming_page.html
+
+	aiming_page.html   --- a html page for this project
+	acis_s_plot.html   --- a html page for acis s
+	hrc_i_plot.html    --- a html page for hrc i
+	hrc_s_plot.html    --- a html page for hrc s
+
+
+$web_dir/Fig_save/
+------------------
+
+	acis_point_err.gif --- a plot for acis_s_data
+	hrc_i_point_err.gif--- a plot for hrc_i_data
+	hrc_s_point_err.gif--- a plot for hrc_s_data

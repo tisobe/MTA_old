@@ -1,0 +1,15 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/abs_pointing_main.perl 
+
+rm -rf  /data/mta/Script/ALIGNMENT/Abs_pointing/Exc/*
+
+chgrp mtagroup /data/mta/Script/ALIGNMENT/Abs_pointing/Data/*
+chgrp mtagroup /data/mta/Script/ALIGNMENT/Abs_pointing/house_keeping/*
+chgrp mtagroup /data/mta_www/mta_aiming/*.html 
+chgrp mtagroup /data/mta_www/mta_aiming/Fig_save/* 
+

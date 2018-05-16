@@ -1,0 +1,1 @@
+/data/mta/Script/Weekly/get_ftemp_data.perl

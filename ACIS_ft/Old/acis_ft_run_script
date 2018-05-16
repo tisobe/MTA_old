@@ -1,0 +1,38 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+unsetenv PERLLIB
+unsetenv PERL5LIB
+
+set path = (/home/ascds/DS.release/bin/  $path)
+set path = (/home/ascds/DS.release/ots/bin/ $path)
+
+setenv ACISTOOLSDIR /home/pgf
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_make_list.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_make_database.perl
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_day.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_week.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_3day.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_month.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_3_month.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_plot_long_term.perl
+
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_diff_fp_plots.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_print_html.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_clean_month_data.perl
+
+rm -rf  day_list day3_list week_list month_list today_list new_list zout
+
+chgrp mtagroup /data/mta_www/mta_temp/mta_fp/* 
+chgrp mtagroup /data/mta_www/mta_temp/mta_fp/Figs/* 
+chgrp mtagroup /data/mta/Script/ACIS/Focal/*
+chgrp mtagroup /data/mta/Script/ACIS/Focal/Data/*
+chgrp mtagroup /data/mta/Script/ACIS/Focal/Short_term/*
+
+rm -rf  /data/mta/Script/ACIS/Focal/Exc2/*

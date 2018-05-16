@@ -1,0 +1,1 @@
+TERM=dummy; export TERM;  /bin/tcsh  < /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_run_script_test

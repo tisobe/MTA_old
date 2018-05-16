@@ -1,0 +1,2 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/ACIS/CTI/ACIS_CTI/acis_cti_plot_script
+

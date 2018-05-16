@@ -1,0 +1,8 @@
+operation=retrieve
+dataset = mta
+detector = grad
+level = 0.5
+filetype = gradablk
+tstart= 2018:001:00:00:00
+tstop = 2018:002:00:00:00
+go

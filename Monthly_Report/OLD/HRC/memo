@@ -1,0 +1,61 @@
+
+
+HRC Dose Map
+------------
+
+1. start arc4gl, and get a list of evt1 data for the month:
+
+        operation=browse
+        dataset=flight
+        detector=hrc 
+        level=1
+        filetype=evt1
+	version=last		<<<<<<<<< try with and without
+        tstart=<starting date of the month>
+        tstop=<ending data of the month>
+
+2. save the list in "list".
+
+3 run get_hrc_img_data.perl <USER> <PASS>, where <USER> is your arc4gl user name, and
+  <PASS> is your password.
+
+4. this creates 2 types of img fits files: hrci: hrcf*_i_img.fits and hrcs: hrcf*_s_img.fits
+   save list of each type into separate list files.
+
+5. rename one of the file to img_list, then run comb_img_data.perl
+   output file name is: total.fits
+
+6. change total.fits to an appropriate name (e.g.HRCI_08_1999.fits).
+
+8. compute stat with fimgstat
+
+9. images are created with:
+        saotag <img.fits> -block 2
+        set color to heat, scale to log scale for hrci and histogram for hrcs
+        zoom x1/2
+        select save screen to gif from "Images"
+
+
+######## OLD #########
+
+* Similar to Acis. Usually there are only few files, so I do manually.
+
+  -HRC-I
+[dmcopy '*.fits[events][bin tdetx=6192:10192:1, tdety=6192:10192:1]'
+         out*.fits option=image]
+
+  -HRC-S
+[dmcopy '*.fits[events][bin detx=30768:34768:1, dety=30768:34768:1]'
+         out*.fits option=image]
+
+
+fimgmerge to combine data
+
+fimgstat to compute statistics
+
+Image:
+
+saotag <img.fits> -block 2
+set color to heat, scale to log scale
+zoom x1/2
+select save screen to gif from "Images"

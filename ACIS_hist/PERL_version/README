@@ -1,0 +1,167 @@
+
+############################
+ACIS Histogram Mode Trending
+############################
+
+Purpose: Creates trends of three peaks (Al, Mn, Ti).
+	 Creates  composite background plots.
+
+Reference: 
+http://asc.harvard.edu/cal/Acis/Cal_prods/bkgrnd/current/background.html
+
+Using C handra Level 0 Event Histogram Files to Characterize the High-Energy Particle Background (PS file)
+	Biller, B., Plucinsky, P., Edgar, R. 01/22/02
+
+Location: /data/mta/Scriot/Acis_hist/New_acis_hist
+
+Web site: http://asc.harvard.edu/mta_days/mta_acis_hist/New/acis_hist_main.html
+	  /data/mta/www/mta_acis_hist/New
+
+----------
+directory
+----------
+
+/data/mta/Script/ACIS/Acis_hist/house_keeping/dir_list
+
+$bin_dir	/data/mta/MTA/bin/					#--- executable is kept
+$bdata_dir	/data/mta/MTA/data/					#--- bin data directory
+$web_dir	/data/mta/www/mta_acis_hist/				#--- web site directory
+$data_dir	/data/mta/Script/ACIS/Acis_hist/Data/			#--- directory holds data
+$house_keeping	/data/mta/Script/ACIS/Acis_hist/house_keeping/		#--- house keeping
+$mj_dir		/data/mta_www/mta_temp/mta_states/MJ/			#--- state data are obtained from here
+
+
+--------------------
+acis_hist_main.perl
+--------------------
+This script does:
+1. reads a date in month list (format:YYYY:MM)
+2. obtains data from archive
+3. reads a sim position from comprehensive_data_summary 
+   and find where ACIS was located (at HRC-S or HRC-I)
+4. finds out ACIS read out parameters, such as FEP, PBLOCK, EXPCOUNT
+   so that we know which rows were exposed, and how long.
+5. if ACIS was at an external source postion, 
+	find out Al K alpha, Mn K alpha, and Ti K aplha peaks, 
+	by fitting a gaussian profile. The quantities obtained were
+	peak positions (ADU), peak widths (FWHM, ADU), and count
+	rates (counts/sec).
+6. if ACIS was at a background postion,
+	keeps record of count rate (counts/sec) fro the entire range.
+	for the later use.
+	finds out count rates per 500 bins
+
+Input:
+	.hakama:			a password file	(/data/mta4/MTA/bin)
+	.dare:				a user name file (/data/mta4/MTA/bin)
+	month_list:			a list of a month (YYYY:MM)
+	comprehensive_data_summary: 	a list of sim status, read sim location
+					/data/mta_www/mta_temp/mta_states/MJ/$year/
+	acisf*_hist0.fits:		acis histgram data from archive
+
+Output:
+	all outputs are saved in /data/mta/Script/ACIS/Acis_hist/Data/Data_<year>_<month>/CCD<ccd#> directory
+		info_file:		name of all hist file processed, and
+					sim postion (source or background), 
+					and row read (low: 21-221, or high: 801-1001)
+		acisf*_hist0: 		row count rateoutput data of the observation
+		acisf*_hist0.gif:	a gif plot file of above
+		node<node#>_low:	accumulated data for the node # at low (at source)
+		node<node#>_low.gif:	a gif plot file of above
+		node<node#>_high:	accumulated data for the node # at high (at source)
+		node<node#>_high.gif:	a gif plot file of above
+		node<node#>_low_bkg:	accumulated background data for node# at low
+		node<node#>_low_bkg.gif:a gif plot file of above
+		node<node#>_high_bkg:	accumulated background data for node# at high
+		node<node#>_high_bkg.gif:a gif plot file of above
+	note: bkg data are often missing due to rareity of HRC-I observations
+
+PBLOCK: if 2342932: TE_0023C and reads out rows between 21 and 201
+			http:/acis/mit/edu/cgi-bin/get-atbls?tag=TE_0023C
+	if 2334740: TE_0023A and reads out rows between 801 and 1001 
+			http:/acis/mit/edu/cgi-bin/get-atbls?tag=TE_0023A
+
+-------------------------
+acis_hist_plot_trend.perl
+-------------------------
+This script does:
+1.  obtains peak postions, peak widths, and peak counts for three peaks from the
+    acis_hist.perl output, and plot their trends along time (DOM).
+    this is for acis is looking at the external source.
+
+Input: 
+	/data/mta/www/mta_acis_hist/Data/Results/CCD<ccd#>/node<node#>_<loc>: data file from acis_hist.perl. loc is high or low
+
+Output:
+	/data/mta/www/mta_acis_hist/Results/CCD<ccd#>/<loc>_peak.gif
+	/data/mta/www/mta_acis_hist/Results/CCD<ccd#>/<loc>_width.gif
+	/data/mta/www/mta_acis_hist/Results/CCD<ccd#>/<loc>_count.gif
+
+---------------------------------
+acis_hist_acc_bkg_plot_full.perl
+---------------------------------
+This script does:
+1. obtains all backgound count rate data.
+2. adds them up for each bin
+3. re-bins to 40 bins to 1 bin, so that there are 100 bins instead 4000 for the entire range
+4. plots the backgound.
+
+Input:
+	/data/mta/www/mta_acis_hist/Data/Results/CCD<ccd#>/node<node#>_<loc>_bkg:  background count rate data, loc: high or low
+
+Output:
+	/data/mta/www/mta_acis_hist/Data/Results/CCD<ccd#>/total_bkg.gif:               plot of above
+	note: many background data are missing due to rarelity of HRC-I observations
+
+---------------------
+other scripts needed
+---------------------
+
+pnmflip
+ppmtogif
+	 ------ these two codes are used to convert a ps file to a gif file.
+		located in /data/mta4/MTA/bin
+
+
+
+------------------------------
+Memo from Peter Ford (3/14/05)
+------------------------------
+
+
+Here's a table showing the various PBLOCKs (and window blocks) we've used
+since the end of OAC.
+
+   N   PBLOCK   PBLOCK     WBLOCK   NC ROW1 ROWS
+------------------------------------------------
+   1   806932 0x000c5014            I5   0  1024
+   1   815124 0x000c7014            S5   0  1024
+  12  1802260 0x001b8014            I5   0  1024
+   8  1810452 0x001ba014            S5   0  1024
+   3  2334740 0x0023a014 0x00036014 I5   0  1024
+ 107  2334740 0x0023a014 0x00038014 I5   0  1024
+ 119  2342932 0x0023c014 0x00039014 I5   0  1024
+   2  2342932 0x0023c014 0xa0000004 I5   0  1024
+   1  2760724 0x002a2014            I6   0  1024
+  69  4530196 0x00452014            I5   0  1024
+   3  4534292 0x00453014            I5   0  1024
+   1  5169172 0x004ee014 0x0005a014 I5   0  1024
+   1  5242900 0x00500014 0x0005b014 I5   0  1024
+   2  7086100 0x006c2014            I5   0  1024
+------------------------------------------------
+
+where N is the number of runs using this PBLOCK (shown above in decimal
+and hexadecimal), WBLOCK is the value of its accompanying window block
+(if used). NC indicates how many CCDs were run and whether they were
+mostly from the I- or S-array. ROW1 indicates the first row read out,
+and ROWS the total number of rows read.
+
+The most common window blocks, 0x00038014 and 0x00039014, restrict the
+rows to 801-1001 and 21-221, counting from 0, respectively. Without a
+window block, all rows are accepted, i.e., 1-1022 (since an event
+cannot be centered on row 0 or row 1023).
+
+Most of our recent histogram runs have used 0x0023a014, 0x0023c014,
+and 0x00452014, but we have also begun to use 0x006c2014 to monitor all
+rows of the four ACIS-I chips + CCD_S3.
+

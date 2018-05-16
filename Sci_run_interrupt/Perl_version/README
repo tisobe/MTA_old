@@ -1,0 +1,180 @@
+
+This set of scripts extract and  plot science run interruption around high radiation.
+Current setting of directories are:
+
+	$bin_dir       = /data/mta4/MTA/bin/;
+	$data_dir      = /data/mta4/MTA/data/;
+	$web_dir       = /data/mta/www/mta_interrupt/;
+	$house_keeping = /data/mta/Script/Interrupt/house_keeping/;
+
+
+1. create input list (e.g, input_file)
+	format (without the first 2 lines below):
+
+	name		start			stop		        Int	method
+	------------------------------------------------------------------------------
+	20021126        2002:11:26:19:02        2002:11:27:22:30        90.5    manual
+
+   the time here is GMT, and Interval is k-sec. Int is raugh estimate. It will be 
+   recomputed in the next step.
+   Note: this file can include more than one interruptions.
+
+2. make sure:
+
+	$house_keeping/rad_zone_info
+	$house_keeping/rad_data<yyyy> (eg. rad_data2006)
+
+    exist, and they are updated. These data are created by
+
+	perl $bin_dir/sci_run_get_rad_zone_info.perl 
+	perl $bin_dir/sci_run_get_radiation_data.perl
+
+   which run once a day (cronjob) to update the files.
+
+	0 5 * * * cd /data/mta/Script/Interrupt/; /data/mta4/MTA/bin/sci_run_wrap_script 
+
+   Note, rad_data<yyyy> is updated by sci_run_get_radiation_data.perl daily, but
+   the data is 2 days behind from the today's date.
+
+
+
+3a. run everything with one script:
+
+	perl $bin_dir/sci_run_main_run.perl input_file
+	
+    and skip to Step 10.
+
+or
+
+3b.  run each script separtely. 
+
+	first, gather rad zone passage information:
+	
+	perl $bin_dir/sci_run_add_to_rad_zone_list.perl  <input_file>
+
+	where  <input_file> is the file made in the step 1, and containing 
+               starting time e.g., 2006:03:20:10:30 .
+
+   this will create rad_zone_list, which gives radiation zone information around the
+   interruption. if there are multiple entries, this will add them automatically.
+
+4. add the data in input_file to "all_data" (this file is in $house_keeping). 
+   To do this, run:
+
+   	perl $bin_dir/sci_run_compute_gap.perl  <file>
+
+   this will compute science time lost (interruption total - radiation zone)
+   and add to the all_data list. Check the interruption time. If it is different
+   from what is quoted in SOT report (or elsewhere), use that number instead of this one.
+
+5. plot NOAA data. run:
+   
+ 	/opt/local/bin/perl $bin_dir/sci_run_rad_plot.perl
+		this will ask:
+		input:  rad_data<yyyy>		(e.g. rad_data2006) 
+	       	 	input_file  		(from 1)
+
+	Outputs are (for example):
+		$web_dir/Main_plot/20060320.gif
+		$web_dir/Tiny_plot/20060320_tiny.gif
+		postscript versions are also kept in $web_dir/Ps_dir
+
+	Compute statistics of the radiations
+
+	/opt/local/bin/perl $bin_dir/sci_run_find_hardness.perl  
+	input: $house_keeping/all_data 
+
+6. plot ephin data
+
+	/opt/local/bin/perl $bin_dir/extract_ephin.perl <file name>
+
+or if the data older than 2011
+	perl $bin_dir/extract_ephin_pre2011.perl <name> <start> <end>
+
+#	perl $bin_dir/sci_run_ephin_plot_main.perl
+#		input  input_file (from 1)
+#	       	user name	---- user name and password for arc4gl
+#	       	pass word
+#
+#	scondary program: $bin_dir/sci_run_get_ephin.perl (extract_ephin.perl)
+
+
+	Output: $web_dir/Ephin_plot/20060320_eph.gif	
+	        a postscript version is also kept in $web_dir/Ps_dir
+
+#	compute ephin stat:
+#
+#	perl $bin_dir/compute_ephin_avg.perl <input file>	#--- STAT is now computed in the prev step.
+#
+7. extract goes-15 data and creates a plot	
+
+
+	/opt/local/bin/perl extract_goes.perl 
+		input input_file (from 1)
+
+8. Print indivisual html page
+
+	first createa a front page plot
+	
+#	/opt/local/bin/perl plot_first_page_fig.perl <name> <start> <end>
+#		input  event name  beginning time ending time (from input_file from 1);
+
+	/opt/local/bin/perl plot_first_page_fig.perl <input file>
+
+	perl $bin_dir/sci_run_print_html.perl
+	input: input_file
+		----if you use all_data, you can create top html pages, too, but you will
+		    lose all indivisual html manually modified. SO AVOID TO USE ALL_DATA
+
+9. Print top level html pages		<---- probably don't need to run this after step 8, but check
+
+   	perl $bin_dir/sci_run_print_top_html.perl --- top html pages
+	input: all_data	
+
+#######################################################################################################
+	DON'T FORGET TO MOVE THE *.html FILES to /data/mta_www/mta_interrupt/
+**!!!!! IMPORTNAT: GO TO THE PAGE AND OPEN THE  time_order.html FILE, AND CHECK EVERYTHING IS THERE
+**!!!!! AFTER ALL PROCESS WAS DONE. THERE IS SOME GLITCH TO REPLACE THE FILE TO AN EMPTY ONE!!!!!
+#######################################################################################################
+
+10. Create note html
+	go to $web_dir/Note_dir, and create a file such as 20060320.txt.
+	copy comments from SOT report/email notifications about the interruption.
+
+11. Output:
+
+    in $web_dir, following html pages are created:
+
+	auto_shut.html
+	hard_order.html
+	manu_shut.html
+	time_order.html
+
+    in the same $web_dir, there are several data directoreis:
+
+	Data_dir: data files for each data
+			20000608_dat.txt 	20000608_eph.txt
+
+	Ephin_plot: ephin plot
+			20000608_eph.gif
+
+	Main_plot: radiation plot
+			20000608.gif		
+	Tiny_plot: plot for index
+			20000608_tiny.gif
+
+	Html_dir: each html page
+			20000608.html
+
+	Note_dir: files of description of data
+			20000608.txt
+
+	Stat_dir: Kept statistics
+			20000608_stat
+
+    in $house_keeping,
+	all_data
+	rad_data<yyyy>
+	rad_zone_info
+	rad_zone_list
+

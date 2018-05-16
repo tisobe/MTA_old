@@ -1,0 +1,23 @@
+
+Dir: /data/mta/Script/HRC/Temperature/HRC_temperature/ 
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_hrc_temperature.html
+
+This set of scripts extract HRC temperature information from dataseeker database, and plot them.
+
+hrc_temperature_wrap_script
+hrc_temperature_main_script
+
+
+hrc_temperature_plot.perl
+-------------------------
+This script calls dataseeker and extract temperature related data from t = 1999:202:00:00:00 to
+today's date.
+
+Input
+-----
+	None
+
+Output
+-------
+	Date file: 	None
+	Plots:		hrc_temp1.gif		hrc_temp2.gif

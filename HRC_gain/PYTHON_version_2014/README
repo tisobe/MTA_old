@@ -1,0 +1,124 @@
+
+This set of scripts get AR Lac observation for HRC, and compute gain and pha shifts
+
+----------
+directries
+----------
+'/data/mta/Script/HRC/Gain/HRC_gain/'               :   bin_dir
+'/data/mta/MTA/data/'                               : bdata_dir
+'/data/mta/Script/HRC/Gain/Exc/'                    : exc_dir
+'/data/mta_www/mta_hrc/Trending/Gain_data/'         : web_dir
+'/data/mta_www/mta_hrc/Trending/Gain_data/Plots/'   : plot_dir
+'/data/mta/Script/HRC/Gain/Data/'                   : data_dir
+'/data/mta/Script/HRC/Gain/house_keeping/'          : house_keeping
+'/usr/local/bin/'                                   : op_dir
+'/data/mta/Script/HRC/Gain/Test_out/'               : test_web_dir
+'/data/mta/Script/HRC/Gain/Test_out/Data/'          : test_data_dir
+'/data/mta/Script/Python_script2.7/'                : mta_dir
+
+
+--------------------
+hrc_gain_wrap_script
+--------------------
+a wrapping script for hrc_gain_main_script
+
+
+--------------------
+hrc_gain_main_script
+--------------------
+a main script to drive all python scripts
+
+
+-------------------------
+hrc_gain_wrap_script_test
+-------------------------
+a wrapping script for hrc_gain_main_script_test
+
+
+-------------------------
+hrc_gain_main_script_test
+-------------------------
+a main script to run test
+
+
+---------------
+hrc_gain_run.py
+---------------
+
+a control script to find AR Lac observations and compute stat.
+
+Input: 
+If you supply AR Lac obsid as ARGV, it will calculate it stat unless it is already done. 
+Otherwise, it will extract HRC observations from a recent observation list
+
+Output: see hrc_gain_fit_voigt.py
+
+-------------------------
+hrc_gain_find_ar_lac.py
+-------------------------
+
+find  new AL Lac observations and put in a list.
+
+Input: /data/mta_www/mp_reports/events/mta_events.html
+       sybase access --- from the sybase, get target name to check
+                         whether this is  an AR Lac observation.
+
+Output: ./candidate_list
+
+--------------------
+hrc_gain_fit_gaus.py ---- this is not used; replaced by hrc_gain_fit_voigt.py
+--------------------
+
+extract hrc evt2 files and fit a normal distribution on pha values 
+
+Input: candidate_list
+       hrc evt2 fits files from archive using ar4gl.  
+
+Output: /data/mta/Script/HRC/Gain/Data/hrc<obsid>_pha.dat
+
+--------------------
+hrc_gain_fit_voigt.py
+--------------------
+
+extract hrc evt2 files and fit a voigt distribution on pha values 
+
+Input: candidate_list
+       hrc evt2 fits files from archive using ar4gl.  
+
+Output: /data/mta/Script/HRC/Gain/Data/hrc<obsid>_pha.dat
+        /data/mta/Script/HRC/Gain/house_keeping/fitting_results
+
+-----------------------
+hrc_gain_make_table.py
+-----------------------
+
+create a html display table of fitting resutls 
+
+Input: /data/mta/Script/HRC/Gain/house_keeping/fitting_results
+Output: /data/mta_www/mta_hrc/Trending/Gain_dat/fitting_results.html
+
+
+----------------------
+hrc_gain_trend_plot.py
+----------------------
+create time trend of Gaussian profiles fit on HRC PHA data 
+
+Input: /data/mta/Script/HRC/Gain/house_keeping/fitting_results
+Output: /data/mta_www/mta_hrc/Trending/Gain_data/Plots/*png
+
+
+-------
+Outputs
+-------
+
+/data/mta_www/mta_hrc/Trending/Gain_data/Data/hrc<obsid>_pha.dat 
+    ---- this is pha distribution data
+
+/data/mta/Script/HRC/Gain/hosue_keeping/fitting_results
+    ---- this is a voigt profile fitting results for the pha distributions
+
+/data/mta_www/mta_hrc/Trending/Gain_data/Plots/hrcf<obsid>_gfit.png
+    ---- plots of the pha distribution
+
+/data/mta_www/mta_hrc/Trending/Gain_dat/Trend_plots/hrc*png
+    ---- time trend plots

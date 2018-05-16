@@ -1,0 +1,84 @@
+
+###########################
+MTA Trending / Limit Table 
+###########################
+
+Dir: /data/mta/Script/Limit_table/Scripts/ 
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_limit_table.html
+
+This directory contains a set of python scripts which estimates yellow and red limits of all msids from the past data.
+The limits are derived from  average and standard deviations of the last 6 monhts data. 
+The scripts also give the trend plots of these limits, along trend plots and envelope plots,  from the beginning of 
+the Chandra mission. 
+
+Data are taken from:
+--------------------
+    /data/mta4/Deriv/*fits
+which give one hour average of histroical data. Most data in this data set is 5 min average, but grad data are 
+one hour average.
+
+Scripts (/data/mta/Script/Limit_table/Scripts):
+------------------------------------------------
+
+limitTableCreate.py: driving script
+    input:  None.
+    output: extracted data, plots, os_limit_table
+
+limitTableExtractData.py:    extract data from the histrical fits data, and create ascii limit table for each msid
+    input:  data file: fits file from above
+            tspan:     data collecting period 6 month = 15778800 sec
+            outloc:    the direcotry name that all data are saved
+
+    output: outloc/*****   ascii data files
+
+limitTableMsidTable.py:      create a current limit table
+    input:  dataloc:    the directory path to the data location
+    output: <dataloc>/os_limit_table    most recent data limit table
+
+limitTablePlotGen.py:        plot trend plots.
+    input: file:        data file name
+           out_path:    directory name where plots are saved
+    output: <out_path>/<group_name>/<msid>.gif:   plots
+
+limitTableHtmlGen.py:        crate html pages for viewing tremd plots
+    input: none      but it will read directly from plot_dir
+    output: html pages corresponding to the plots
+
+limit_table_wrap_script:    running warp script
+
+limit_table_main_script:    running main script: set the environment and run the main python script
+
+Other python script used:
+-------------------------
+from /data/mta/Script/Python_script:
+
+convertTimeFormat.py:   collection of time conversion related python scripts
+mta_common_functions.py:    collecitons python scripts
+
+
+
+Current Directory Structure (see house_keeping/dir_list)
+--------------------------------------------------------
+
+'/data/mta/Script/Limit_table/house_keeping/'           :house_keeping
+'/data/mta/Script/Limit_table/'                         :bin_dir
+'/data/mta/www/mta_limit_table/Plots/'                  :plot_dir
+'/data/mta/www/mta_limit_table/Data/'                   :data_dir
+'/data/mta/Script/Python_script/'                       :mta_dir
+'/data/mta/www/mta_limit_table/'                        :html_dir
+
+
+/data/mta/Script/Limit_table/
+-----------------------------
+
+limit_trend.html    The main html page
+
+Data
+----
+os_limit_table:     limit data table
+Data/*:             6 month average histroy data of msids grouped in each group
+
+Plots
+-----
+<group name>.html   a html page for the group
+<group name>        a directory contrin limit history plots for msids of the group

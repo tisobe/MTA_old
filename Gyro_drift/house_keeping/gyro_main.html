@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+<!--
+<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" /> 
+-->
+
+<style  type='text/css'>
+table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}
+td{text-align:center;padding:8px}
+a:link {color:#00CCFF;}
+a:visited {color:yellow;}
+span.nobr {white-space:nowrap;}
+</style>
+<title>Gyro Drift Rate and Grating Motion</title></head>
+
+<body style='color:white;background-color:black;'>
+<h2>Grating Motion and Gyro Drift Rate Monitoring</h2>
+
+<p>
+On this page, we trends the effect of a grating motion on the stability of the spacecraft.
+The following steps are taken to produce the trending plots.
+</p>
+
+<ul>
+<li>Fit a polynomial line on gyro drift rates data.
+<li>Take the difference between the fitted line and data points of before, during, and after of each grating motion. 
+<li>Compute the average and it standard deviation.
+</ul>
+
+<p>
+For more detail descriptions of the analysis, please check 
+<a href='http://cxc.harvard.edu/mta_days/mta_grat/Gyro/Memo/gyro_memo1.html'>memo</a>.
+</p>
+<p>
+If the standard deviations are significantly different among these three periods, 
+the grating motion actually affects the stability of the spacecraft, and if the scattering of the standard deviations
+is getting larger, it indicates the grating motions affect the stability of the spacecraft more and more with time.
+</p>
+<p>
+The following example  plots show time trends of the standard deviations.
+The first one is before the grating motion started, the second is the during the motion, and the
+last one is the after the motion completed. The next three plots are ratios of standard deviations 
+of before/during, after/during, and before/after of the grating motion.
+For averages, standard deviations, and slope fitting resutls for these plots,
+please see: <a href='http://asc.harvard.edu/mta_days/mta_grat/Gyro/Fig_save/gyro_drift_hist_roll_hetg_insr.html'>
+HETG Insertion, Roll page</a>.
+</p>
+
+<br/><br />
+
+<img src="./Fig_save/gyro_drift_hist_pitch_hetg_insr.gif" alt='gyro_drift_hist_pitch_hetg_insr'  style='height:600px;width:800px'>
+
+<br /><br />
+<p style='padding-bottom:20px'>
+To see all other plots and see statistics, please go to:
+</p>
+<table style='border-width:0px'>
+<tr>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_roll_hetg_insr.html' target=blank>HETG Insertion, Roll</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_pitch_hetg_insr.html' target=blank>HETG Insertion, Pitch</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_yaw_hetg_insr.html' target=blank>HETG Insertion, Yaw</a></li>
+</ul>
+</tr>
+
+<tr>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_roll_hetg_retr.html' target=blank>HETG Retraction, Roll</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_pitch_hetg_retr.html' target=blank>HETG Retraction, Pitch</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_yaw_hetg_retr.html' target=blank>HETG Retraction, Yaw</a></li>
+</ul>
+</tr>
+
+<tr>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_roll_letg_insr.html' target=blank>LETG Insertion, Roll</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_pitch_letg_insr.html' target=blank>LETG Insertion, Pitch</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_yaw_letg_insr.html' target=blank>LETG Insertion, Yaw</a></li>
+</ul>
+</tr>
+<tr>
+
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_roll_letg_retr.html' target=blank>LETG Retraction, Roll</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_pitch_letg_retr.html' target=blank>LETG Retraction, Pitch</a></li>
+</ul>
+<td>
+<ul>
+<li><a href='./Fig_save/gyro_drift_hist_yaw_letg_retr.html' target=blank>LETG Retraction, Yaw</a></li>
+</ul>
+</tr>
+</table>
+
+<p>
+If you want to see an individual polynomial fit on gyro drift data around a grating motion, please
+go to:
+</p>
+<ul>
+<li><a href='hetg_insr.html'>HETG Insertion</a></li>
+<li><a href='hetg_retr.html'>HETG Retraction</a></li>
+<li><a href='letg_insr.html'>LETG Insertion</a></li>
+<li><a href='letg_retr.html'>LETG Retraction</a></li>
+</ul>
+
+<br />
+<strong>Memo</strong><br />
+<ul>
+<li><a href='http://cxc.harvard.edu/mta_days/mta_grat/Gyro/Memo/gyro_memo1.html'>
+Estimating an Effect of Grating Motion on the Spacecraft Stabilities</a></li>
+</ul>
+<br />
+<hr />
+Last Modified: Apr 20, 2017
+<br /><br />
+If you have any question about this page, please contact:
+<a href='mailto:tisobe@cfa.harvard.edu'>tisobe@cfa.harvard.edu</a>

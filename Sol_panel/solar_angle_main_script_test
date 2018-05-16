@@ -1,0 +1,15 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+cp -r /data/mta/Script/Sol_panel/house_keeping/Test_prep /data/mta/Script/Sol_panel/Test_out
+
+/usr/local/bin/perl /data/mta/Script/Sol_panel/Sol_panel_script_linux/solar_angle_master.perl test
+
+chgrp mtagroup /data/mta/Script/Sol_panel/Data/*
+chgrp mtagroup /data/mta/Script/Sol_panel/Data/*/*
+
+chgrp mtagroup /data/mta_www/mta_sol_panel/*
+chgrp mtagroup /data/mta_www/mta_sol_panel/Plots/*

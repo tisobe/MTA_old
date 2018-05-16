@@ -1,0 +1,6 @@
+'/data/mta/MTA/bin/'                           :bin_dir
+'/data/mta/Script/Limit_table/house_keeping/'  :house_keeping
+'/data/mta/Script/Python_script/'              :mta_dir
+'/data/mta/www/mta_limit_table/'               :html_dir
+'/data/mta/www/mta_limit_table/Data/'          :data_dir
+'/data/mta/www/mta_limit_table/Plots/'         :plot_dir

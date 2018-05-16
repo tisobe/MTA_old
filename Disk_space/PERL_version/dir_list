@@ -1,0 +1,6 @@
+bin_dir		/data/mta/MTA/bin/
+run_dir		/data/mta/Script/Disk_check/Exc/
+data_out	/data/mta/Script/Disk_check/Data/
+web_dir		/data/mta/www/mta_disk_space/
+fig_out		/data/mta/www/mta_disk_space/Figs/
+op_dir		/usr/bin/

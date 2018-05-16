@@ -1,0 +1,21 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_update_html.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract.perl 
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_plot_only.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_acadata.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_remove_dupl.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_fid_trend_plots.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_year_plot.perl
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_qtr_plot.perl
+
+rm -r /data/mta/Script/ALIGNMENT/Sim_twist/Exec/Sim_twist_temp/*
+
+chgrp mtagroup /data/mta_www/mta_sim_twist_ds10/*
+chgrp mtagroup /data/mta_www/mta_sim_twist_ds10/*/*
+chgrp mtagroup /data/mta/Script/ALIGNMENT/Sim_twist/Data/*
+

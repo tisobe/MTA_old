@@ -1,0 +1,365 @@
+
+Retrieve focal plane temeperature values from telematered data, and plot it.
+
+Dir: /data/mta/Script/CIS/Focal/Acis_ft/ 
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_acis_focal.html
+
+#######
+cronjob
+#######
+
+These scripts are run as cronjobs on colossus:
+
+0 7 * * *    cd /data/mta/Script/Focal/Exc/; /data/mta/MTA/bin/acis_ft_wrap_script
+  						> $HOME/Logs/focal.cron 2>&1
+#0 8 * * *    cp /data/mta/www/mta_fp/Data/* /18/swolk/MTA/Focal/DATA/*
+  						> $HOME/Logs/cp_focal.cron 2>&1
+#0 8 * * *    cp /data/mta/Script/Short_term/* /18/swolk/MTA/Focal/Short_term/*
+  						> $HOME/Logs/cp_short.cron 2>&1
+
+############
+Directories
+############
+
+the main list is kept in a script: acis_ft_make_list.perl. If needed, modify the directory list there. 
+
+$bin_dir        = '/data/mta/MTA/bin/';			
+			----- all scripts are kept here
+
+$data_dir       = '/data/mta/MTA/data/';
+			----- under ./Acis_ft/. Acis_ft related data and modules are kept
+
+$web_dir        = '/data/mta/www/mta_fp/';
+			----- web directory
+
+$house_keeping  = '/data/mta/Script/ACIS/Focal/house_keeping/';
+			----- house keeping files are kept here
+					old_list_short: a list of past data
+					keep_data:	a list of unprocessed data
+
+$data_out       = '/data/mta/Script/ACIS/Focal/Data/';
+			----- data directory
+					long_term_data: entire period
+					month_data:	3 months data
+					week_data:	10 days data
+					mj_month_data	mj data
+
+$short_term     = '/data/mta/Script/Focal/Short_term/';
+			----- keep short term data in full details.
+
+########################
+Descriptions of scripts
+########################
+
+All perl scripts are in /data/mta/MTA/bin/
+
+--------------------
+acis_ft_wrap_script
+--------------------
+
+A wrap script to run "acis_ft_run_script"
+
+-------------------
+acis_ft_run_script
+-------------------
+
+Initialize the environment with .ascrc, and set ACISTOOLSDIR to  /home/pgf
+then, run all required perl scripts, and clean up the mess at the end.
+
+
+----------------------
+acis_ft_make_list.perl
+----------------------
+
+This script prepares today_list, day3_list, week_list, month_list, which contains
+a list of data needed to create plots.
+
+It also extracts data using "acis_ft_fptemp.perl" from telematered data and creates
+most detailed data in $short_term directory. 
+
+Input:
+	$house_keeping/old_list_short:	past data list
+	/dsops/GOT/input/*Dump_EM*:	telemetered data 
+		(e.g., /dsops/GOT/input/2006_096_0402_096_1145_Dump_EM_35722.gz)
+Output:
+	./dir_list:	a list of related directory list
+	./today_list:	a new data list for today
+	./month_list:	a list of month data
+	./week_list:	a list of week data
+	./day3_list:	a list of 3 day data
+	./day_list:	a list of day data
+	./new_list:	a list of new data
+
+	short term data:	
+		e.g., data_2006_095_1952_096_0404 (beginning date/time, ending date/time).
+		The data format is: 
+		16671824 095:78067.950295 -119.70 -248.67  
+		(tix, doy, time in sec, ft, cold rad, temp)
+
+Script need: 	acis_ft_fptemp.perl 
+		/data/mta/MTA/Acis_ft/getnrt
+
+
+-------------------
+acis_ft_fptemp.perl
+-------------------
+
+This is  Peter Ford's perl script which reads focal temp data from telemetered data
+
+Usage:	 /opt/local/bin/gzip -dc $ent 
+		|$bin_data/Acis_focal/getnrt -O $* 
+			| $bin_dir/acis_focal_fptemp.pl
+
+Input: 
+	$ent: (e.g.) /dsops/GOT/input/2006_096_0402_096_1145_Dump_EM_35722.gz
+
+Output:
+	e.g., 16671824 095:78067.950295 -119.70 -248.67
+
+Script needed:	/data/mta/MTA/Acis_ft/getnrt--- macro for this script
+
+
+--------------------------
+acis_ft_make_database.perl
+--------------------------
+
+This script reads data from $short_term/ and mta_comprehensive_data_summary and
+makes data lists for plotting
+
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/mj_month_data:	mj data for radiator temperature
+	$data_out/month_data:		a month data list
+	$data_out/week_data:		a week long data list
+	$house_keeping/keep_data:	a data list previously could not be analyzed
+	./new_list:			a list of new data
+	$short_term/$name:		a short term data
+	/data/mta/Script/OBT/MJ/todays_data: a todays mj data
+
+Output:
+	$data_out/long_term_data:	a long term data
+						data are about 8 hrs averages
+	$data_out/month_data:		a month long  data (updated)
+						data are about 6 mins averages (3 months)
+	$data_out/week_data:		a week long data (updated)
+						full data from the telemetory (10 days)
+	$data_out/mj_month_data:	a mj data
+	$house_keeping/keep_data:	a data list which could not be analyzed this round
+	
+	
+Script needed:	$bin_dir/acis_ft_rm_dupl.perl:	removing duplicated lines
+
+
+---------------------
+acis_ft_plot_day.perl
+---------------------
+
+This script plots focal plane temperature trend for a day.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/week_data		a week long data
+
+Output:
+	$web_dir/Figs/day_plot.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+	example: (input: pgplot.ps, output: $web_dir/Figs/day_plot.gif)
+
+	echo ''	| gs -sDEVICE=pgmraw -sOutputFile=- -g2100x2769 -r256x256 -q pgplot.ps
+		| $bin_dir/pnmcro p| $bin_dir/pnmscale -xsize 500
+		| $bin_dir/ppmquant 16| $bin_dir/pnmpad -white -l20 -r20 -t20 -b20
+		| $bin_dir/pnmflip -r270| $bin_dir/ppmtogif 
+	  > $web_dir/Figs/day_plot.gif
+
+
+----------------------
+acis_ft_plot_week.perl
+----------------------
+
+This script plots a focal plane temperature trend for a week.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/week_data		a week long data
+
+Output: 
+	$web_dir/Figs/week_plot.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+----------------------
+acis_ft_plot_3day.perl
+----------------------
+
+This script plots a focal plane temperature trend for 3 day period.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/week_data		a week long data
+
+Output: 
+	$web_dir/Figs/day3_plot.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+
+-----------------------
+acis_ft_plot_month.perl
+-----------------------
+
+This script plots a focal plane temperature trend for a month.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/month_data		a month long data
+
+Output: 
+	$web_dir/Figs/month_plot.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+-------------------------
+acis_ft_plot_3_month.perl
+-------------------------
+
+This script plots a focal plane temperature trend for a month.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/month_data		a month long data (this actually contains upto 3 months)
+
+Output: 
+	$web_dir/Figs/month3_plot.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+-------------------------
+acis_ft_plot_3_month.perl
+-------------------------
+
+This script plots a focal plane temperature trend for a month.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/long_term_data	a data file for the entire period
+
+Output: 
+	$web_dir/Figs/fp_temp.gif
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+--------------------------
+acis_ft_diff_fp_plots.perl
+--------------------------
+
+This script creates plots of differences between focal plan temperatue
+and cold radiator temperatures (side A and side B).
+
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/long_term_data:	a long term data
+	$data_out/month_data:		a month long data
+	$data_out/week_data:		a week long data
+	
+Output:
+	$web_dir/Figs/today_side_a.gif:	a day long plot for side A
+	$web_dir/Figs/today_side_b.gif:	a day long plot for side B
+	
+	$web_dir/Figs/day3_side_a.gif:	three day long plot for side A
+	$web_dir/Figs/day3_side_b.gif:	three day long plot for side B
+	
+	$web_dir/Figs/week_side_a.gif:	a week long plot for side A
+	$web_dir/Figs/week_side_b.gif:	a week long plot for side B
+	
+	$web_dir/Figs/month_side_a.gif:	a month long plot for side A
+	$web_dir/Figs/month_side_b.gif:	a month long plot for side B
+	
+	$web_dir/Figs/month3_side_a.gif:	three month long plot for side A
+	$web_dir/Figs/month3_side_b.gif:	three month long plot for side B
+	
+	$web_dir/Figs/entire_side_a.gif:	an entire period plot for side A
+	$web_dir/Figs/entire_side_b.gif:	an entire period plot for side B
+
+Scripts needed: ps file to gif file conversion related scripts.
+			pnmcrop	pnmflip	pnmpad	pnmscale ppmquant ppmtogif
+
+
+-----------------------
+acis_ft_print_html.perl
+-----------------------
+
+This script updates html pages related focal plane temperature plots.
+
+Input:
+	./dir_list:			a list of directories
+
+Output:
+	$web_dir/main_fp_temp.html       the main html page for focal plane temp
+
+	$web_dir/fp_day_temp.html        a day long data
+	$web_dir/today_side_a.html
+	$web_dir/today_side_b.html
+
+	$web_dir/fp_3day_temp.html       three day long data
+	$web_dir/day3_side_a.html        
+	$web_dir/day3_side_b.html        
+
+	$web_dir/fp_week_temp.html       a week long data
+	$web_dir/week_side_a.html
+	$web_dir/week_side_b.html
+
+	$web_dir/fp_month_temp.html      a month long data
+	$web_dir/month_side_a.html       
+	$web_dir/month_side_b.html
+
+	$web_dir/fp_month3_temp.html     three month long data
+	$web_dir/month3_side_a.html      
+	$web_dir/month3_side_b.html      
+
+	$web_dir/fp_temp.html            the entire period
+	$web_dir/entire_side_a.html      
+	$web_dir/entire_side_b.html      
+
+
+-----------------------------
+acis_ft_clean_month_data.perl
+-----------------------------
+This script clean up the month long data.
+
+Input:
+	./dir_list:			a list of directories
+	$data_out/month_data:		a month long data
+
+Output:
+	$data_out/month_data:		a month long data (updated)
+
+###########
+Other files
+###########
+
+------
+getnrt
+------
+This is a module for Peter Ford script: acis_fp_fptemp.perl
+This one is hept in $data_dir/Acis_ft/ directory.
+
+------
+README
+------
+This file.
+
+Cron
+-----
+r2d2-v as mta:
+0 2 * * *  cd /data/mta/Script/ACIS/Focal/Exc; /data/mta/Script/ACIS/Focal/Acis_ft/acis_ft_wrap_script 
+

@@ -1,0 +1,27 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+unsetenv PERLLIB
+unsetenv PERL5LIB
+
+set path = (/home/ascds/DS.release/bin/  $path)
+set path = (/home/ascds/DS.release/ots/bin/ $path)
+
+/usr/local/bin/perl /data/mta/Script/HRC/Gain/HRC_gain/hrc_gain_find_ar_lac.perl
+
+/usr/local/bin/perl /data/mta/Script/HRC/Gain/HRC_gain/hrc_gain_fit_gaus_on_hrc.perl ./candidate_list
+
+/usr/local/bin/perl /data/mta/Script/HRC/Gain/HRC_gain/hrc_gain_plot_hrc_evol.perl
+
+/usr/local/bin/perl /data/mta/Script/HRC/Gain/HRC_gain/hrc_gain_create_data_html.perl
+
+
+chgrp mtagroup /data/mta_www/mta_hrc/Trending/Gain_data/*
+chgrp mtagroup /data/mta_www/mta_hrc/Trending/Gain_data/Plots/*
+chgrp mtagroup /data/mta/Script/HRC/Gain/house_keeping/* 
+chgrp mtagroup /data/mta/Script/HRC/Gain/Data/* 
+
+rm -rf /data/mta/Script/HRC/Gain/Exc/*

@@ -1,0 +1,6 @@
+house_keeping /data/mta/Script/Sol_panel/house_keeping/
+script_dir	/data/mta/Script/Sol_panel/Scripts/
+data_dir	/data/mta/Script/Sol_panel/Data/
+html_dir	/data/mta/www/mta_sol_panel/
+main_dir	/data/mta/Script/Sol_panel/
+op_dir		/usr/local/bin/

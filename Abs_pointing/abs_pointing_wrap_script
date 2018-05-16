@@ -1,0 +1,1 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/abs_pointing_run_script

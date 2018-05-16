@@ -1,0 +1,468 @@
+
+*********************************************
+HOW TO GET DATA AND PLOTS FOR MONTHLY REPORT
+*********************************************
+
+Monthly report html's are kept in: /stage/ascds_extra/swolk/www/REPORTS/MONTHLY
+
+ACIS Dose Map
+-------------
+
+<SEE A NEW PROCESS>
+#* On a head machine,  go to  /data/mta2/isobe/Exposure
+#	- arc4gl to access archive
+#	- browse for acis evt1 files for the month
+#	- make a list of the acis*evt1.fits of the month 
+#	  save it in a file "list". name only (e.g.,acisf00737_000N001_evt1.fits)
+#	- go to /pool14/mta or any other pool space. copy dm_img.perl and the list
+#	  file. make sure that there is a "param" directory (for ftools).
+#	- run dm_img.perl to get total exposure map
+#          -creates image using
+#            [dmcopy '*.fits[events][bin tdetx=2800:5200:1, tdety=1650:4150:1]' 
+#                   out*.fits option=image]
+#	- copy and run comp_stat.perl to get statistics for I2/3 and S2/3.
+#
+#	  all up-dated scripts are kept in /data/mta2/isobe/Exposure. The version in
+#	  pool space may not be current; so always copy scripts from 
+#          /data/mta2/isobe/Exposure.
+#
+#	Creating cumulative fits file
+#		edit total_list: add the last month's image name (then add 0,0 at the end)
+#		use fimgmerge:
+#			fimgmerge jul_total.fits @total_list ACIS_03_07_2000.fits
+#
+
+> if you already have the event files you are interested in combining
+>  a. list them in "list"
+>  b. run get_img_data.perl -noget
+>  c. skip to 4. below
+>
+> if you need to get the files from the archive, proceed with 1. below
+
+1. start arc4gl, and get a list of evt1 data for the month:
+
+	operation=browse
+	dataset=flight
+	detector=acis
+	level=1
+	filetype=evt1
+	tstart=<starting date of the month>
+	tstop=<ending data of the month>
+
+   NOTE: you may want to delay this as late as you can, since the data may not get into
+	 archieve till several day after the observation.
+
+2. save the list in "list".
+
+3 run get_img_data.perl <USER> <PASS>, where <USER> is your arc4gl user name, and
+  <PASS> is your password.
+
+4. this creates img fits files. group them into about 20 each and save in files
+	NOTE: watch the process. once in a while even one file exceeds I4 bit max. level.
+	      if that happens, convert the fits file with step 6 and save aside.
+
+5. rename one of the file to img_list, then run comb_img_data.perl
+   output file name is: total.fits
+
+6. change the bit system by:
+	chimgtyp total.fits out1.fits datatype=LONG
+
+7. repeat 5 and 6 for all groups, then combined out1.fits, out2.fits.... with
+   fimgmerge
+
+8. compute stat with fimgstat and comp_stat.perl
+
+
+9. Creating gif files:
+		for the entire image:
+			saotng total_exp.fits -block 4 -winsize 720
+			flip the image (select from scale)
+			set color to heat, scale to histogram
+			select save screen to gif file from "Images"
+
+		for the I3/S3
+			saotng total_exp.fits -block 4
+			magnify 2x
+			pan to the chip
+			rests are same as above
+   
+    08/2002 
+      alternate method: use ~joye/ds9 to make PNG files. 
+                         (ds9 version 2.2 or higher)
+                        make sure (setenv PATH "/usr/local/bin:${PATH}")
+                             to get correct ghostscript version
+                        screen size 580 X 870
+                        scale and color image as above, 
+                             then File->Save As-> Image
+
+HRC Dose Map
+------------
+
+{SEE NEW PROCESS}
+#* Similar to Acis. Usually there are only few files, so I do manually.
+#
+#  -HRC-I
+#[dmcopy '*.fits[events][bin tdetx=6192:10192:1, tdety=6192:10192:1]' 
+#         out*.fits option=image]
+#
+#  -HRC-S
+#[dmcopy '*.fits[events][bin detx=30768:34768:1, dety=30768:34768:1]'
+#	out*.fits option=image]
+#
+
+> if you already have the event files you are interested in combining
+>  a. list them in "list"
+>  b. run get_hrc_img_dat.perl -noget
+>  c. skip to 4. below
+>
+> if you need to get the files from the archive, proceed with 1. below
+
+1. start arc4gl, and get a list of evt1 data for the month:
+
+	operation=browse
+	dataset=flight
+	detector=hrc
+	level=1
+	filetype=evt1
+	tstart=<starting date of the month>
+	tstop=<ending data of the month>
+
+2. save the list in "list".
+
+3 run get_hrc_img_data.perl <USER> <PASS>, where <USER> is your arc4gl user name, and
+  <PASS> is your password.
+
+4. this creates 2 types of img fits files: hrci: hrcf*_i_img.fits and hrcs: hrcf*_s_img.fits
+   save list of each type into separate list files.
+
+5. rename one of the file to img_list, then run comb_img_data.perl
+   output file name is: total.fits
+
+6. change total.fits to an appropriate name (e.g.HRCI_08_1999.fits).
+
+8. compute stat with fimgstat and comp_stat.perl
+
+9. images are created with:
+	saotag <img.fits> -block 2
+	set color to heat, scale to log scale for hrci and histogram for hrcs
+	zoom x1/2
+	select save screen to gif from "Images"
+
+
+
+All others are done on colossus:
+
+CTI
+----
+
+*CTI Average
+	* Go to  /18/swolk/MTA/CTI
+	* Update ./Data/squeegy file
+		check http://asc.harvard.edu/acis/CAPs/Squeegy_list.ps
+	* run month_avg.perl
+		when it asks month, use a format of 01,....,12
+		when it asks year, use a formant of 2000, ...
+		outputs are:
+			s-array chips
+			i-array chips
+			backside chips
+        * use month_avg.perl output to update
+                cti_avg.dat (copy from previous month's report directory)
+        * run /home/brad/Reports/plot_cti_avg.pro
+                outputs:
+			cti_avg_acis_i.gif
+			cti_avg_acis_s.gif
+			cti_avg_acis_bi.gif
+	* copy gifs and cti_avg.dat to monthly report directory
+
+* CTI Slope
+	go to cti page on web and read off numbers from the plots.
+	http://asc.harvard.edu/mta_days/mta_temp/mta_cti/cti_page.html
+
+EPHIN/ACIS COUNT RATES
+----------------------
+* copy monthly image from http://cxc.harvard.edu/mta_days/mta_temp/mta_eph_cti/
+  to eph_cnts_<mon>01.gif
+	data location:/data/mta/www/mta_rad/rad_cnts_<month><yy>.gif
+
+* use xv to crop Ephin and Acis panels
+  (draw a box around the part you want to keep and hit crop)
+
+HRMA FOCUS
+----------
+* copy appropriate monthly distance vs. psf plot from 
+
+The two files you need are at:
+
+/data/mta/www/mta_src/ACIS-I_d_t_psf_0.gif 
+and
+/data/mta/www/mta_src/ACIS-I_d_tMay01_psf.gif
+
+Then get the PSF best focus metric from the table at
+ http://asc.harvard.edu/mta_days/mta_src/ACIS-I_psf_time.html
+
+* get on-axis source PSF metric from table at top of above URL
+
+GRAT FOCUS
+----------
+* copy /data/mta/www/mta_grat/Focus/foc_acis_hetg.gif
+       and
+       /data/mta/www/mta_grat/Focus/foc_hrc_letg.gif
+
+* crop streak plot for acis and zero order plot for hrc
+
+#########
+MOTION
+#########
+
+Aug 7, 2003 ---- New for plotting
+
+Plotting grating:
+-----------------
+        updated SIM and Gratings plots Sep 8, 2003 BDS
+        * go to Idl_dir
+        * start IDL
+        * run monthly_sim_plot and monthly_grat_plot procedures
+        * outputs are monthly_sim.gif (cumul TSC and FA moves)
+                      monthly_grat.gif (cumul LETG and HETG moves)
+                      monthly_grat_ang.gif (average grating angles)
+
+	#* go to Idl_dir, and run idl runreport as before.
+	#* read monthly data and add to grating_data
+	#* go to Perl_dir
+	#* run perl script: perl plot_grating.perl
+		output: insertion_cnt.ps, insertion_angle.ps, retraction_angle.ps
+	#* convert ps files into gif files with /home/brad/Progs/ps2gif
+
+Plotting rotation
+-----------------
+
+	* go to Perl_dir
+	* update month_list
+	* run perl script: perl rotation.perl
+	* run perl scrpit: plot_monthly.perl
+		output: rotation.gif
+	* convert the ps file into gif files with /home/brad/Progs/ps2gif
+
+	
+* SIM and Gratings procedures updated Oct00 BS 
+* updated sep03 see above
+
+	* Go to  /home/brad/Reports
+	* Update runreport.pro parameters
+        #  * run mkgratfile (temporary step, until further notice, would like
+                          to use comprehensive_data_summary instead)
+           4/2001 BS, no need to run mkgratfile anymore
+                      uses /home/brad/Dumps/ccdmfilter.out instead
+           5/2001 BS, now uses comprehensive_data_summary
+        * type 'idl runreport'
+		output: monthly_sim.html
+                        monthly_grat.html
+
+			for direct inclusion in MONTHLY.html
+
+	# * currently monthly deltas must still be calculated and entered
+ 	  by hand - updated Jan 01 to calculate deltas
+
+* Go to /data/mta/Script/OBT/swolk/Month
+ 
+* modify month_list
+	year<tab>first date<tab>last date<tab>month
+		dates are DOY
+
+# ########################################################################
+# 
+# * SIM
+# 	Find TSC/FA Month/Ann/Mission movement, month delta
+# 		- run sim_tot.perl: tsc/fa total for the month
+# 		- add them onto the past data to get annual and mission total
+# 		  past data are obtained from the previous month report
+# 		- subtract from the last month data and get month delta
+# 
+# 
+# * TSC for ACIS I/S (A/B), HRC I/S (A/B)
+# 	------- a procedure is not developed yet ----------
+# 
+# * Grating
+# 
+# 	Find numbers of insertion/retraction of HETG/LETG
+# 		- run grating.perl: 
+# 			output: hetg a, letg a, hetg b, letg b numbers 
+# 
+# 	Find mean hetg, letg insertion/retraction angles
+# 		- run ranged_grating.perl 
+# 			output:
+# 				hetg a max/min, hetg b max/min
+# 				letg a max/min, letg b max/min
+# ########################################################################
+
+* Rotation Wheel
+
+####### OUTE OF DATE ####### OUTE OF DATE####### OUTE OF DATE####### OUTE OF DATE ######
+        update month_list
+	Find angles of AORWDAY[1-6] for the month
+		- run rotation.perl
+			total rotation for the month
+			output: AORWDAY[1-6]
+		- run sum_for_rot.perl
+			for this, we need a file "rot_dat", which contains data
+			generated by rotation.perl (redirect into rot_dat).
+			output: 
+		 	add them onto the past data to get annual and mission total
+		  	subtract from the last month data and get month delta
+                - BS 12/00 output is monthly_rwrate.html for inclusion
+                  in MONTHLY.html
+#########################################################################################
+
+######## NEW 03/03/2010 #########
+Now the reaction wheel rotaion computation is moved to:
+
+/data/mta/Script/Rotation_wheel.
+
+Read "README" in the directory to learn how to use it.
+
+
+###########################################
+* Making a focal plane temp and width plot:
+###########################################
+
+        * Update a file focal_temp file.
+                copy data from weekly report: <year> <date in doy> <fp temp> <peak width>
+
+        * run ft_temp_plot.perl (perl script)
+
+        * run ps_to_gif_script (c script): this script works only on colossus
+
+        * output is focal_temp_plot.gif
+
+  ######New 2003 Feb
+
+  To plot a month long focal temp display, use plot_month.perl, then use /home/brad/Progs/ps2gif
+  to convert month_plot.ps to a gif file.
+
+  ###########
+  # Jan 2006 - make fptemp plot w/ earth, sun angles and altitude
+        * download the following columns using DataSeeker for the time
+          range of interest:
+             - mta_sc_criteria -> pt_suncent_ang
+             - mta_sc_criteria -> sc_altitude
+             - deahk_temp -> DEAHK16_avg
+        * put two files downloaded in /data/mta4/Matlab
+        * cd /data/mta4/Matlab
+        * edit plot_erad_time_month.pro
+            - set xmin (line 15)
+            - set xmax by changing number of days in month (line 16)
+            - set xtick marks (lines 31-33)
+        * run plot_erad_time_month
+        * output file is plot_erad_time.gif, copy to monthly dir.
+ 
+            
+
+##################
+Max_Dose_Plot
+##################
+
+First finish Acis and Hrc dose map, compute stat.
+
+Goto /data/mta/Script/Exposure.
+
+open data file dose_data.
+
+add this month"s data. The data format is ':' delimited, and
+
+yyyy:mm:(aics I2 node 0):node1:node2:node3:....:hrci:hrcs
+
+run csh script  exposure_script
+
+copy  gif files from /data/mta/www/mta_max_exp
+
+/data/mta/www/mta_max_exp/Images/hrc_max_exp.gif
+
+
+####################
+Bad Pixel Histogram
+####################
+
+Convert /data/mta/www/mta_bad_pixel/bad_pix_hist.ps to bad_pix_hist.gif
+using /home/brad/Progs/ps2gif bad_pix_hist.ps bad_pix_hist.gif
+/home/brad/Progs/ps2gif hist_ccd.ps front_bad_pix_hist.gif
+/home/brad/Progs/ps2gif hist_ccd5.ps ccd5_bad_pix_hist.gif
+
+######
+PCAD
+######
+
+http://cxc.harvard.edu/mta_days/mta_pcad/IRU/Plots/jan02_1h_bias.gif
+
+http://cxc.harvard.edu/mta_days/mta_pcad/IRU/Plots/jan02_1h_hist.gif
+
+#####################
+Rad zone timing plots
+#####################
+
+cp from http://cxc.harvard.edu/mta_days/mta_rad/mon_per_diff_02.gif
+
+###############
+ACA Trending
+###############
+
+1> cd /data/mta4/www/DAILY/mta_pcad/ACA/QTR/Data
+2> source mkfiles
+3> cd ../..
+4> update_qtr
+
+##################
+SIB Monthly Plots
+##################
+
+To make the plots:
+Go to /home/swolk/ACORN/src1-3/OBT/Month/SIB
+setenv IDL_PATH "/home/mta/IDL:${IDL_PATH}"
+start IDL and run
+idl> sib_monthly,"Data_2004_08"  (replace 2004_08 with current month)
+outputs: SIB_Data_2004_08_total.gif and SIB_Data_2004_08_bands.gif
+
+###############
+dmcopy problem
+###############
+
+
+Please pass this info along to other users 
+of the mta account.
+
+Based on the environment variable settings 
+you sent, I can see how multiple users of
+the mta account would trip over each other's
+parameter files.. causing all sorts of mischief.
+
+Basically, when you do the ASCDS setup, the 
+setup scripts invoke a file called 'ciao.csh'
+which is in the release.  This file, among
+other things, adds $HOME/cxcds_param to the
+front of PFILES.  All users will see that directory
+as the first choice for local parameter files.
+Not the ./param directory which is what you want.
+
+I've done the following:
+  1) modified /home/mta/.cshrc.user to
+      - restore the 'setascds' alias to something that works.
+      - added an alias 'reset_param' which invokes (2)
+
+  2) Added a short script /home/mta/bin/reset_param
+     which fixes the parameter file associated variables
+     to what works with multiple users.  I use this
+     same script when I (as myself) want to run more than one
+     process in my own account.  It makes ./param the ONLY
+     local parameter area.  
+
+What to do:
+  %> setascds -r release   (or whatever you currently do)
+  %> reset_param
+
+So long as you have a ./param in the directory
+you are working from (and you are the only one
+working there ), then you should be all set.
+
+Mark
+
+

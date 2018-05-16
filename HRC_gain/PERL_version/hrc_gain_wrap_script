@@ -1,0 +1,1 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/HRC/Gain/HRC_gain/hrc_gain_main_script

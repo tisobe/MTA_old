@@ -1,0 +1,6 @@
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/data/mta/Script/ACIS/SIB/Correct_excess/Sib_corr/create_sib_data_evt1.py
+

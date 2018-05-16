@@ -1,0 +1,6 @@
+house_keeping /data/mta/Script/Sol_panel_linux/house_keeping/
+script_dir /data/mta/Script/Sol_panel_linux/Sol_panel_script_linux/
+data_dir   /data/mta/Script/Sol_panel_linux/Test_out/Data/
+html_dir   /data/mta/Script/Sol_panel_linux/Test_out/mta_sol_panel/
+main_dir   /data/mta/Script/Sol_panel_linux/
+op_dir     /data/fido/censka/bin/

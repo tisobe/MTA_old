@@ -1,0 +1,192 @@
+
+#################
+Gryro Deift Rate
+#################
+
+This group of scripts create trend plots of stability of the spacecraft
+around the grating movement.
+
+Dir: /data/mta/Script/Grating/Gyro/Gyro_drift
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_gyro_drift.html
+
+----------------------
+gyro_drift_detail.perl
+----------------------
+
+This script plots gryo drift rate around grating moves.
+
+usage: perl /data/mta/MTA/bin/gyro_drift_detail.perl
+
+Data needed
+-----------
+    /data/mta_www/mta_otg/OTG_filtered.rdb
+
+    pacd3eng data from archive
+
+Output
+------
+$data_save/LETG_RETR_2006083.15273240_data.gz etc.
+	---- gyro drift data around grating moves used for the plottings.
+		<time>  <roll drift> <pitch drift> <yaw drift>
+
+$result_dir/fitting_results_roll
+$result_dir/fitting_results_pitch
+$result_dir/fitting_results_yaw
+	---- polynomial fit result on the data
+		<file name> <a0> <a1> <a2> <a3> <a4>
+
+$result_dir/gyro_drift_hist_roll
+$result_dir/gyro_drift_hist_pitch
+$result_dir/gyro_drift_hist_yaw
+	---- average and standard deviation of the difference between
+	     data and polynomial fitting to show whether the grating
+	     move distrubed the spacecraft.
+		<time> 
+		<avg/std before tne move> 
+	     	<avg/std during the move>
+		<avg/std after  the move>
+		<grating>		HETG/LETG
+		<move>			INSR/RETR
+		<moving time>		in sec
+
+HETG_INSR/HETG_INSR_2006082.04522440.gif etc
+HETG_RETR/HETG_RETR_2006083.12125970.gif etc
+LETG_INSR/LETG_INSR_2006083.12163080.gif etc
+LETG_RETR/LETG_RETR_2006083.15273240.gif etc
+	---- six panel plot of the drift around the grating move.
+			
+
+---------------------------
+gyro_drift_sigma_plot.perl
+---------------------------
+
+This script plots time trend of gryp_drift_hist_roll etc to show
+any trends appear with time.
+
+usage: perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl <data file> <grating> <move>
+
+Input
+-----
+	<data file> gyro_drift_hist_roll 	(from the previous script)
+		    gyro_drift_hist_pitch
+		    gyro_drift_hist_yaw
+	<grating>   HETG/LETG
+	<move>      INSR/RETR
+
+Output
+------
+	gyro_drift_hist_roll_hetg_insr.gif 
+	gyro_drift_hist_roll_hetg_retr.gif 
+	gyro_drift_hist_roll_letg_insr.gif 
+	gyro_drift_hist_roll_letg_retr.gif 
+		--- a gif file of a history of the spacecraft stability around grating move.
+
+	gyro_drift_hist_pitch_hetg_insr.gif 
+	gyro_drift_hist_pitch_hetg_retr.gif 
+	gyro_drift_hist_pitch_letg_insr.gif 
+	gyro_drift_hist_pitch_letg_retr.gif 
+
+	gyro_drift_hist_yaw_hetg_insr.gif 
+	gyro_drift_hist_yaw_hetg_retr.gif 
+	gyro_drift_hist_yaw_letg_insr.gif 
+	gyro_drift_hist_yaw_letg_retr.gif 
+
+
+------------------------------
+gyro_drift_prep_data_html.perl
+------------------------------
+
+This script prepares gyrop data to create html pages in the next script
+
+usage: perl /data/mta/MTA/bin/gyro_drift_prep_data_html.perl
+
+Input
+-----
+	$result_dir/gyro_drift_hist_pitch/roll/yaw
+
+Output
+------
+	HETG_INSR
+	HETG_RETR
+	LETG_INSR
+	LETG_RTER
+
+output data are formatted:
+	<year> <ydate> <pitch avg/std before><pitch avg/std during><pitch avg/std after>
+		       <roll...>
+		       <yaw ...>
+
+
+-------------------------------
+gyro_drift_print_gyro_html.perl
+-------------------------------
+
+This script computes statistics for gyro drift plots and creates html pages.
+
+Input
+-----
+	$fig_dir/*gif		--- to figure out name of a html page, we need to know
+	HETG_INSR
+	HETG_RETR
+	LETG_INSR
+	LETG_RTER
+	
+Output
+------
+in $fig_save directory:
+
+gyro_drift_hist_pitch_hetg_insr.html    gyro_drift_hist_roll_letg_insr.html
+gyro_drift_hist_pitch_hetg_retr.html    gyro_drift_hist_roll_letg_retr.html
+gyro_drift_hist_pitch_letg_insr.html    gyro_drift_hist_yaw_hetg_insr.html
+gyro_drift_hist_pitch_letg_retr.html    gyro_drift_hist_yaw_hetg_retr.html
+gyro_drift_hist_roll_hetg_insr.html     gyro_drift_hist_yaw_letg_insr.html
+gyro_drift_hist_roll_hetg_retr.html     gyro_drift_hist_yaw_letg_retr.html
+
+
+-------------------------------
+gyro_drift_create_fig_html.perl
+-------------------------------
+
+This script creates or updates html for all related plots.
+
+usage: perl /data/mta/TMA/bin/gyro_drift_create_fig_html.perl <grating> <move>
+
+Input
+-----
+	<grating> HETG/LETG
+	<move>    INSR/RETR
+
+Output
+------
+HETG_INSR/HETG_INSR_2006082.04522440.html etc
+	--- a wrapping html apage for a gif file: HETG_INSR_2006082.04522440.gif
+HETG_RETR/HETG_RETR_*.html
+LETG_INSR/LETG_INSR_*.html
+LETG_RETR/LETG_RETR_*.html
+
+hetg_insr.html
+	--- a html page lists all the links to HETG_INSR/HETG_INSR_*.html pages.
+hetg_retr.html
+letg_insr.html
+letg_retr.html
+
+gyro_main.html
+	---- the main html page. Only updated date is modified.
+
+
+----------------------
+gyro_drift_wrap_script
+----------------------
+a wrap script for gyro_drift_run_script.
+
+
+---------------------
+gyro_drift_run_script
+---------------------
+A control script for all gyro_drift related perl scripts.
+
+
+Cron Job:
+
+0 1 * * 0    cd /data/mta/Script/Grating/Gyro/Exc; /data/mta/MTA/bin/gyro_drift_wrap_script > $HOME/Logs/gyro_drift 2>&1
+

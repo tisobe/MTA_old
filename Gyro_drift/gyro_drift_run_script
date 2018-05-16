@@ -1,0 +1,40 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_detail.perl
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG RETR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG RETR
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG RETR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG RETR
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG RETR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG RETR
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_prep_data_html.perl
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_print_gyro_html.perl
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_create_fig_html.perl HETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_create_fig_html.perl HETG RETR
+
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_create_fig_html.perl LETG INSR
+/usr/local/bin/perl /data/mta/Script/Grating/Gyro/Gyro_drift/gyro_drift_create_fig_html.perl LETG RETR
+
+rm -rf  HETG_INSR HETG_RETR LETG_INSR LETG_RETR slope*
+rm -rf  *fits zlist
+
+chgrp mtagroup /data/mta_www/mta_grat_ds10/Gyro/* 
+chgrp mtagroup /data/mta_www/mta_grat_ds10/Gyro/*/*
+chgrp mtagroup /data/mta/Script/Grating/Gyro/Data2/*
+chgrp mtagroup /data/mta/Script/Grating/Gyro/Result_dir2/*

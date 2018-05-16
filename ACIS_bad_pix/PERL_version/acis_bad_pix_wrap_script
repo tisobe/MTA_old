@@ -1,0 +1,1 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_main_script

@@ -1,0 +1,534 @@
+
+This directory contains scripts which used to create solar panel/spacecraft electric power a
+and fine sensor temperature evolution along the time.
+
+Dir: /data/mta/Script/Sol_panel/Scripts
+See also: https://cxc.cfa.harvard.edu/mta_days/mta_script_list/MTA/ti_sol_panel.html
+
+########
+cron job
+########
+The master script is run once a month on 2nd on rhodes by a user mta. This is because
+dataseeker does not work well if it is not called from rhodes (and a user mta). 
+
+0 3 2 * * cd /data/mta/Script/Sol_panel/Exc; /data/mta/MTA/bin/solar_angle_wrap_script > $HOME/Logs/solar_angle_temp 2>&1
+
+#########
+Directies
+#########
+--------------------------------
+Data ($data_dir --- see below)
+--------------------------------
+
+Data_scelec: 
+	this directory holds data related to spacecraft electric power
+Data_sensor:
+	this directory holds data related to fine sensor temperature
+Data_solar_panel:
+	this directory holds data related to solar panel temperature
+Ind_data_files:
+	this directory holds fits data and some prereminary data sets
+Plot_data:
+	this directory holds model fitting parameter files
+
+-------------------------------
+Exc ($main_dir/Exc --- see blow)
+-------------------------------
+This directory is used to run the script.
+
+--------------------------------
+Html ($html_dir ---- see below)
+--------------------------------
+
+solarpanel.html			the main page
+plotting_page1.html		the page for solar panel time evolution plots
+plotting_page2.html		the page for spacecraft electric power evolution plots
+plotting_page3.html		the page for +Y SDSA and ELBI relational plots
+plotting_page4.html		the page for fine sensor time eveolution plots
+
+Plots:				all plots are saved here
+
+########
+Scripts
+########
+
+-----------------------
+solar_angle_wrap_script
+-----------------------
+This is a wrap script to run solar_angle_main_script
+
+-----------------------
+solar_angle_main_script
+-----------------------
+this script sets up the environment, and run perl script solar_angle_master.perl
+
+-----------------------
+solar_angle_master.perl
+-----------------------
+This is a master script which runs all others. 
+
+Input: 
+	NONE
+Output:
+	$html_dir/solarpanel.html
+
+Script etc:
+	all others described below
+
+Currently, the directires are set to:
+	$script_dir = '/data/mta/MTA/bin/';
+	$data_dir   = '/data/mta/Script/Sol_panel/Data/';
+	$html_dir   = '/data/mta/www/mta_sol_panel/';
+	$main_dir   = '/data/mta/Script/Sol_panel/';
+
+
+-------------------------------
+extract_data_from_dataseek.perl
+-------------------------------
+This script extracts data for a study of  Solar Panel/Electric Power/Fine
+Sensor Time Evolutions and Solar Angles. This script uses dataseeker and must
+be run on rhodes by a user mta.
+
+Input:
+	NONE
+Output:
+	$data_dir/Ind_data_files/angle<yyyy>.fits.gz		sun angle data
+	$data_dir/Ind_data_files/angle<yyyy>.dat
+	$data_dir/Ind_data_files/solar_panel<yyyy>.fits.gz	solar panel temperature data
+	$data_dir/Ind_data_files/solar_panel<yyyy>.dat
+	$data_dir/Ind_data_files/scelec_<yyyy>.fits.gz		space craft electric power data
+	$data_dir/Ind_data_files/scelec_<yyyy>_data
+	$data_dir/Ind_data_files/sensor<yyyy>.fits.gz		fine sensor temperature data
+	$data_dir/Ind_data_files/sensor<yyyy>.dat
+
+Script etc:
+	dataseeker.pl: data seeker
+	dmcopy
+	dmmerge
+	dmlist
+
+----------------------
+scelec_angle_comb.perl
+----------------------
+This script combines spacecraft electric power data and solar agnle data.
+
+Input:
+	$this_year:	the latest year in which the data are available
+	$data_dir/Ind_data_files/angle<yyyy>.dat
+	$data_dir/Ind_data_files/scelec_<yyyy>_data
+
+Output:
+	$data_dir/Data_scelec/scelec_angle<ddd>: <ddd> is sun angle 
+
+Script etc:
+	None
+
+----------------------
+sensor_angle_comb.perl
+----------------------
+This script combines fine sensor temperature data and solar agnle data.
+
+Input:
+	$this_year:	the latest year in which the data are available
+	$data_dir/Ind_data_files/angle<yyyy>.dat
+	$data_dir/Ind_data_files/sensor<yyyy>.dat
+
+Output:
+	$data_dir/Data_sensor/sensor_angle<ddd>: <ddd> is sun angles
+
+Script etc:
+	None
+
+---------------------------
+solar_panel_angle_comb.perl
+---------------------------
+This script combines fine solar panel temperature data and solar agnle data.
+
+Input:
+	$this_year:	the latest year in which the data are available
+	$data_dir/Ind_data_files/angle<yyyy>.dat
+	$data_dir/Ind_data_files/solar_panel<yyyy>.dat
+
+Output:	
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>: <ddd> is sun angles
+
+Script etc:
+	None
+
+-------------------
+sep_col_scelec.perl
+-------------------
+This script separates spacecraft power data into each element
+
+Input:
+	$data_dir/Data_scelec/scelec_angle<ddd>
+Output:
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbi.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbv.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_hrma.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_oba.dat
+
+Script etc:
+	None
+
+-------------------
+sep_col_sensor.perl
+-------------------
+This scropt separates fine sensor data into each element.
+
+Input:
+	$data_dir/Data_sensor/sensor_angle<ddd>
+Output:
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt1.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt2.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tpc_fsse.dat
+
+Script etc:
+	None
+
+----------------------
+sep_col_solar_pan.perl
+----------------------
+This script separates solar panel data into each element
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>
+Output:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tmysada.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tpysada.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsamyt.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsapyt.dat
+
+Script etc:
+	None
+
+--------------------
+find_env_scelec.perl
+--------------------
+This script finds a moving average and an envelop for spacecarft electric 
+power data (except elbv) 
+
+Input:
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbi.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_hrma.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_oba.dat
+Output:
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbi_env.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_hrma_env.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_oba_env.dat
+
+Script etc:
+	$script_dir/find_moving_avg.perl
+		moving average period: 		0.20 (year)
+		moving average step size:	0.10 (year)
+		a degree of polynomial fitting:	4
+
+--------------------
+find_env_sensor.perl
+--------------------
+This script finds a moving average and an envelop for fine sensor data.
+
+Input:
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt1.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt2.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tpc_fsse.dat
+Output:
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt1_env.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt2_env.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tpc_fsse_env.dat
+
+Script etc:
+	$script_dir/find_moving_avg.perl
+		moving average period: 		0.20 (year)
+		moving average step size:	0.10 (year)
+		a degree of polynomial fitting:	4
+
+-----------------------
+find_env_solar_pan.perl
+-----------------------
+This script finds a moving average and an envelop for the soloar panel data 
+(tmysada and tpysada only)
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tmysada.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tpysada.dat
+Output:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tmysada_env.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tpysada_env.dat
+
+Script etc:
+	$script_dir/find_moving_avg.perl
+		moving average period: 		0.20 (year)
+		moving average step size:	0.10 (year)
+		a degree of polynomial fitting:	4
+
+
+-----------------------
+fit_sin_for_scelec.perl
+-----------------------
+This script is a control script to fit a sine wave model on the spacecraft data.
+
+Input:
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbv.dat
+Output:
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbv_sine.dat
+	$data_dir/Plot_data/scelec_angle<ddd>_elbv_sine_param: keep model parameters
+
+Script etc:
+	$script_dir/sin_wave_scelec.perl
+
+------------------------
+fit_sin_for_sol_pan.perl
+------------------------
+This script is a control script to fit sin wave model on solar panel data
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsapyt.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsamyt.dat
+Output:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsapyt_sine.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsamyt_sine.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsapyt_sine_param
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsamyt_sine_param
+
+Script etc:
+	$script_dir/sin_wave_scelec.perl
+
+--------------------
+plot_scelec_env.perl
+--------------------
+This script plots space craft electric power data
+
+Input:
+	$data_dir/Data_scelec/scelec_angle<ddd>
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbi_env.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_hrma_env.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_oba_env.dat
+	$data_dir/Plot_data/scelec_angle<ddd>_elbv_sine_param
+Output:
+	$html_dir/Plots/scelec_angle<ddd>.gif
+
+Script etc:
+	PGPLOT package
+	pnmcrop
+	pnmflip
+	ppmtogif
+
+	#--- load bus current
+	
+	$elbi_min       = 45.0;
+	$elbi_max       = 85.0;
+	$elbi_opmin     = 52.0;
+	$elbi_opmax     = 78.0;
+	
+	#--- load bus voltage
+	
+	$elbv_min       = 25.0;
+	$elbv_max       = 35.0;
+	$elbv_opmin     = 28.0;
+	$elbv_opmax     = 33.8;
+	
+	#--- HRMA computered total power
+	
+	$hrma_min       = 40.0;
+	$hrma_max       = 100.0;
+	
+	#--- OBA computerd total power
+	
+	$oba_min        = 20.0;
+	$oba_max        = 150.0;
+
+--------------------
+plot_sensor_env.perl
+--------------------
+This script plots fine sensor temperature data
+
+Input:
+	$data_dir/Data_sensor/sensor_angle<ddd>
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt1_env.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tfssbkt2_env.dat
+	$data_dir/Data_sensor/sensor_angle<ddd>_tpc_fsse_env.dat
+Output:
+	$html_dir/Plots/sensor_angle<ddd>.gif
+
+Script etc:
+	PGPLOT package
+	pnmcrop
+	pnmflip
+	ppmtogif
+
+	#--- FSS BRACKET-1 TEMP (+Y)
+
+	$tfssbkt1_min   = 220.0;
+	$tfssbkt1_max   = 380.0;
+	$tfssbkt1_opmin = 237.0;
+	$tfssbkt1_opmax = 342.0;
+	
+	#--- FSS BRACKET-2 TEMP (+Y)
+	
+	$tfssbkt2_min   = 220.0;
+	$tfssbkt2_max   = 380.0;
+	$tfssbkt2_opmin = 237.4;
+	$tfssbkt2_opmax = 342.0;
+	
+	#---FSSE TEMP (BTWN UNITS)
+	
+	$tpc_min        = 240.0;
+	$tpc_max        = 300.0;
+	$tpc_opmin      = 253.0;
+	$tpc_opmax      = 294.1;
+
+-------------------------
+plot_solar_array_env.perl
+-------------------------
+This script plots solar array temperature data and it model fits 
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tmysada_env.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tpysada_env.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsamyt_sine_param
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tsapyt_sine_param
+Output:
+	$html_dir/Plots/solar_panel_angle<ddd>.gif
+
+Script etc:
+	PGPLOT package
+	pnmcrop
+	pnmflip
+	ppmtogif
+
+	#---  -Y SADA
+
+	$sadany_ymin    = 240.0;
+	$sadany_ymax    = 300.0;
+	$sadany_opmin   = 248.0;
+	$sadany_opmax   = 294.0;
+	
+	#--- + Y SADA
+	
+	$sadapy_ymin    = 250.0;
+	$sadapy_ymax    = 300.0;
+	$sadapy_opmin   = 258.0;
+	$sadapy_opmax   = 294.1;
+	
+	#--- - Y solar array
+	
+	$solany_ymin    = 300.0;
+	$solany_ymax    = 370.0;
+	$solany_opmin   = 310.0;
+	$solany_opmax   = 349.7;
+	
+	#--- + Y solar array
+	
+	$solapy_ymin    = 300.0;
+	$solapy_ymax    = 340.0;
+	$solapy_opmin   = 311.1;
+	$solapy_opmax   = 330.2;
+
+-------------------
+plot_elbi_sada.perl
+-------------------
+This script plots elvi sada relation
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_tpysada.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_elbi_data
+Output:
+	./solpan_elbv.gif: this will be moved to:
+	$html_dir/Plots/sensor_angle<ddd>.gif
+
+Script etc:
+	PGPLOT package
+	pnmcrop
+	pnmflip
+	ppmtogif
+
+	$sdsa_min = 265;
+	$sdsa_max = 285;
+	$elbi_min = 53;
+	$elbi_max = 73;
+
+--------------------
+find_moving_avg.perl
+--------------------
+This script fit a moving average, a n-th degree polynomial,
+and an envelope to a given data
+
+Input:
+	file name:      input data file name in (indepedent depedent) format    
+                	the x and y are separated by a space                    
+	a period:       a period for a moving average                           
+                        	take this so that each period has enough        
+                        	data points. if you take the period wider       
+                        	the moving average get more smoother            
+	step size:      a step size of moving box. it can be same as            
+                        	the period.if the step size is <= 0             
+                        	each data point is used a step                  
+	degree:         a degree of polynomial fitting (<= 5 are probably safe) 
+                        	if they are not enough data points, take lower  
+                        	degree. otherwise, it may not give a good fit   
+	out file        a name of output file name                              
+Output:
+	out file        date (or indep. val) a date of the middle of the period 
+                	mvavg                a moving average                   
+                	sigma                a standard deviation of the mvavg  
+                	bottom               a polynomial fitted bottom envelop 
+                	middle               a polynomial fitted middle envelop 
+                	top                  a polynomial fitted top envelop    
+                	std_fit              a polynomial fit for std           
+                	min_sv               data used to compute bottom envlope
+                	max_sv               data used to compute top envlope   
+
+Script etc:
+	NONE
+
+--------------------
+sin_wave_scelec.perl
+--------------------
+This script fits  linear + sine wave + exponential model for spacecraft electric power
+
+Input:
+	$data_dir/Data_scelec/scelec_angle<ddd>_<inst>.dat
+Output:
+	sin_data
+	fit_result
+	these are moved by the control script:fit_sin_for_scelec.perl:
+	$data_dir/Data_scelec/scelec_angle<ddd>_<inst>_sine.dat
+	$data_dir/Data_scelec/scelec_angle<ddd>_<inst>_sine_param
+
+Script etc:
+	NNONE
+
+-----------------------
+sin_wave_sol_panel.perl
+-----------------------
+This script fits  linear + sine wave + exponential model for solar panel data
+
+Input:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_<inst>.dat
+Output:
+	sin_data
+	fit_result
+	these are moved by the control script:fit_sin_for_sol_pan.perl:
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_<inst>_sine.dat
+	$data_dir/Data_solar_panel/solar_panel_angle<ddd>_<inst>_sine_param
+
+Script etc:
+	NNONE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

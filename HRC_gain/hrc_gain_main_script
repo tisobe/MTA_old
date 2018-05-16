@@ -1,0 +1,5 @@
+cd /data/aschrc6/wilton/isobe/Project8/ArLac/Exc2
+source /proj/sot/ska/bin/ska_envs.csh
+
+/data/aschrc6/wilton/isobe/Project8/ArLac/Scripts2/Scripts/hrc_gain_run.py
+

@@ -1,0 +1,27 @@
+source /home/mta/.ascrc 
+
+cd /data/mta4/HRC/Exc
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+setenv PFILES "${PDIRS}" 
+
+/opt/local/bin/perl /data/mta/MTA/bin/hrc_dose_set_dir.perl
+
+/opt/local/bin/perl /data/mta/MTA/bin/hrc_create_center_dose_map.perl
+
+/opt/local/bin/perl /data/mta/MTA/bin/hrc_create_full_dose_map.perl
+
+/opt/local/bin/perl /data/mta/MTA/bin/hrc_dose_update_main_html.perl
+
+/opt/local/bin/perl /data/mta/MTA/bin/hrc_dose_monthly_plot_stat.perl
+
+rm dir_list*
+
+
+chgrp mtagroup /data/mta/Script/Exposure/Hrc/*/*
+
+chgrp mtagroup /data/mta_www/mta_max_exp/HRC/*
+chgrp mtagroup /data/mta_www/mta_max_exp/HRC/*/*
+
+

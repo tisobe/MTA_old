@@ -1,0 +1,203 @@
+
+*********************
+Disk Space Monitoring
+*********************
+
+This set of scripts monitor disk spaces and if the capacity of a disk is over a threshold, 
+send out warning email.
+
+########
+cron job
+########
+0  3 * * * cd /data/mta/Script/Disk_check/Exc/; /data/mta/MTA/bin/disk_space_wrap_script1 
+0 12 * * * cd /data/mta/Script/Disk_check/Exc/; /data/mta/MTA/bin/disk_space_wrap_script2
+
+The first task finds disk usages (it may takes more than 2 hrs), and the second one extracts
+data and plots them.
+
+The script must be run on rhodes.
+
+###########
+Directories
+###########
+/data/mta/Script/Disk_check/house_keeping/dir_list
+
+$bin_dir  = '/data/mta/MTA/bin/';
+$run_dir  = '/data/mta/Script/Disk_check/Exc/';
+$web_dir  = '/data/mta/www/mta_disk_space/';
+$data_out = "/data/mta/Script/Disk_check/Data/";
+$fig_out  = "/data/mta/www/mta_disk_space/Figs/";
+
+
+#######
+Scripts
+#######
+
+-----------------------
+disk_space_wrap_script1
+-----------------------
+A wrap script for "disk_space_main_script_1"
+
+-----------------------
+disk_space_wrap_script2
+-----------------------
+A wrap script for "disk_space_main_script_2"
+
+------------------------
+disk_space_main_script_1
+------------------------
+A control script for "disk_space_run_dusk.perl"
+
+------------------------
+disk_space_main_script_2
+------------------------
+A control script for "disk_space_plot_fig.perl"
+
+------------------------
+disk_space_run_dusk.perl
+------------------------
+This script runs a task "dusk" on each disk, and finds out disk usages.
+This script needs more than 2 hrs to complete; so run during the early morning.
+
+Input:		None
+
+Output:
+		$run_dir/dusk_check		disk usage of /data/mta/
+		$run_dir/dusk_check2		disk usage of /data/mta4/
+		$run_dir/dusk_check3		disk usage of /data/mays/
+		$run_dir/dusk_check4		disk usage of /data/aaron/
+
+Scripts needed:
+		/opt/local/bin/dusk:	find out disk space usage
+
+------------------------
+disk_space_plot_fig.perl
+------------------------
+This script controls all data extract/plotting scripts
+This script also update $web_dir/disk_space.html
+
+Input:
+		./dir_list: directory listing
+
+Output:		None (not directly from this script)
+
+Script needed:
+		$bin_dir/disk_space_check_size.perl
+		$bin_dir/disk_space_read_dusk.perl
+		$bin_dir/disk_space_read_dusk2.perl
+		$bin_dir/disk_space_read_dusk3.perl
+		$bin_dir/disk_space_read_dusk4.perl
+
+--------------------------
+disk_space_check_size.perl
+--------------------------
+This script checks disk spaces and if the usage is above the threshold,
+send out a warning email.
+
+Input:
+		./dir_list: 			directory listing
+		$data_dir/disk_space_data:	past data of disk space history
+
+Output:
+		$data_dir/disk_space_data:	updated data of disk space history
+		$fig_out/disk_space1.gif:	plots of disk usage, /data/mta/,/data/mta1/, /data/mta2/
+		$fig_out/disk_space2.gif	plots of disk usage, /data/mta4/,/data/mays/, /data/aaron/
+
+Scripts needed:
+		pnmflip, ppmtogif:		ps to gif file conversion related function. /data/mta4/MTA/bin/
+
+-------------------------
+disk_space_read_dusk.perl
+-------------------------
+This script read data useage of /data/mta/, and plot disk usage.
+
+Input:
+		./dir_list:                     directory listing
+		$run_dir/dusk_check:		dusk results
+		$data_out/disk0_data:		past data of disk usage (/data/mta/)
+
+Output:
+		$data_out/disk0_data:		updated data of disk usage
+		$fig_out/data_mta.gif:		plot of disk usage
+
+Scripts needed:
+		pnmflip, ppmtogif:		ps to gif file conversion related function. /data/mta4/MTA/bin/
+
+Fromat of data:
+		'time',Scrpt','DataSeeker','Test','CAL','TMP','MOON','CTI_mon','mta_db'
+
+		e.g., 2459.491:70.46: 3.79: 2.42: 1.51: 0.16: 0.64: 0.37: 0.05
+
+		time is in dom, usage is in %.
+
+--------------------------
+disk_space_read_dusk2.perl
+--------------------------
+This script read data useage of /data/mta4/, and plot disk usage.
+
+Input:
+		./dir_list:                     directory listing
+		$run_dir/dusk_check2:		dusk results
+		$data_out/disk0_data_mta4:	past data of disk usage (/data/mta4/)
+
+Output:
+		$data_out/disk0_data_mta4:	updated data of disk usage
+		$fig_out/data_mta.gif:		plot of disk usage
+
+Scripts needed:
+		pnmflip, pncrop,  ppmtogif:	ps to gif file conversion related function. /data/mta4/MTA/bin/
+
+Fromat of data:
+		'time', 'AExtract','www','MTA_DOC','alert_test','space_weather','MTA'
+
+		e.g., 2459.491:56.46:10.76: 0.65: 0.27: 0.17: 0.08
+
+		time is in dom, usage is in %.
+
+--------------------------
+disk_space_read_dusk3.perl
+--------------------------
+This script read data useage of /data/mays/, and plot disk usage.
+
+Input:
+		./dir_list:                     directory listing
+		$run_dir/dusk_check3:		dusk results
+		$data_out/disk0_data_mays:	past data of disk usage (/data/mays/)
+
+Output:
+		$data_out/disk0_data_mays:	updated data of disk usage
+		$fig_out/data_mta.gif:		plot of disk usage
+
+Scripts needed:
+		pnmflip, pncrop,  ppmtogif:	ps to gif file conversion related function. /data/mta4/MTA/bin/
+
+Fromat of data:
+		'time', 'ANCHORS', 'MTA', 'BRAD'
+
+		e.g., 2459.491:49.75:17.93: 0.90
+
+		time is in dom, usage is in %.
+
+--------------------------
+disk_space_read_dusk4.perl
+--------------------------
+This script read data useage of /data/aaron/, and plot disk usage.
+
+Input:
+		./dir_list:                     directory listing
+		$run_dir/dusk_check4:		dusk results
+		$data_out/disk0_data_aaron:	past data of disk usage (/data/aaron/)
+
+Output:
+		$data_out/disk0_data_aaron:	updated data of disk usage
+		$fig_out/data_mta.gif:		plot of disk usage
+
+Scripts needed:
+		pnmflip, pncrop,  ppmtogif:	ps to gif file conversion related function. /data/mta4/MTA/bin/
+
+Fromat of data:
+		'time', 'OBSERVATIONS', 'YAXX', 'SCIENCE', 'NBIZUNOK'
+
+		e.g., 2459.491:64.79:13.26: 4.02: 2.38
+
+		time is in dom, usage is in %.

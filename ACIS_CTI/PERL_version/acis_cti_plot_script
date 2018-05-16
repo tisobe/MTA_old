@@ -1,0 +1,19 @@
+source /home/mta/.ascrc 
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+unsetenv PERLLIB
+unsetenv PERL5LIB
+
+set path = (/home/ascds/DS.release/bin/  $path)
+set path = (/home/ascds/DS.release/ots/bin/ $path)
+
+setenv MTA_REPORT_DIR  /data/mta/Script/ACIS/CTI/Exc/Temp_comp_area
+
+/usr/local/bin/perl /data/mta/Script/ACIS/CTI/ACIS_CTI/acis_cti_run_all_script.perl
+
+chgrp mtagroup /data/mta/Script/ACIS/CTI/Data/* /data/mta/Script/ACIS/CTI/Data/*/* 
+chgrp mtagroup /data/mta/Script/ACIS/CTI/house_keeping/*
+chgrp mtagroup /data/mta_www/mta_temp/mta_cti_ds10/* /data/mta_www/mta_temp/mta_cti_ds10/*/*

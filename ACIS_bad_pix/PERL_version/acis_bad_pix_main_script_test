@@ -1,0 +1,35 @@
+source  /home/mta/.ascrc 
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+unsetenv PERLLIB
+unsetenv PERL5LIB
+
+set path = (/home/ascds/DS.release/bin/  $path)
+set path = (/home/ascds/DS.release/ots/bin/ $path)
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_test_prep.perl
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_find_bad_pix.perl     	test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_clean_up.perl			test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_new_plot_set.perl		test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bad_pix_create_data_table.perl	test
+
+
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_print_today_data.perl				test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_compute_avg.perl ./Working_dir/today_input_data	test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_get_info.perl ./Working_dir/today_input_data	test
+#
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_plot_bias.perl		test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_plot_sub_info.perl	test
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_html_update.perl		test
+#
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/acis_bias_run_all_ccd.perl		test
+#
+#/usr/local/bin/perl /data/mta/Script/ACIS/Bad_pixels/Acis_bad_pix/cleanup.perl			test
+#
+#rm -rf ./Working_dir
+#
+#rm -rf  /data/mta/Script/ACIS/Exc/*

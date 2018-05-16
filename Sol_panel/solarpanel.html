@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Chandra Temperature/Power and Solar Angle</title>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+<style  type='text/css'>
+table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}
+</style>
+</head>
+
+<body style='background-color:#FFFFE0'>
+
+<h2 style='text-decoration:underline'>Solar Panel/Electric Power/Fine Sensor with Solar Angle</h2>
+
+<blockquote>
+<h3> <em> Summary </em> </h3>
+
+<p style='font-size:105%'>
+In this memo, we examine the evolution of solar panel temperatures, electric powers, and
+fine sensor temperatures with time. The data are subdivided into several solar 
+angle intervals so that we can examine whether the solar angle affects the evolution of these
+quantities. 
+</p>
+<p style='font-size:105%'>
+The fine sensor temperatures are already operating well above the temperatures that they did 
+near launch and we must revise our operational thresholds upwards limit, and a few other 
+quantities may exceed their early mission limits in the next few years. There seems no 
+strong solar angle dependency among the quantities examined.
+</p>
+</em>
+</blockquote>
+
+<h3 style='padding-top:15px'>Solar Panel Temperature and Solar Angle</h3>
+<p>
+To understand whether the temperatures of the solar panels change as time passes, we 
+plotted -Y SADA temperature, +Y SADA temperature, -Y solar panel temperature, and +Y solar 
+panel temperature against mission time.
+
+The data are divided into a 20 degree intervals of the solar pitch angle starting at 40 degrees 
+(minimum pitch is a little greater than 46) to search for any dependencies of these quantities 
+on the solar angle, and then each data group is plotted against the time in years. The _blank 
+spaces in the plotted data are due to missing data in MTA database.
+</p>
+
+
+<p>
+<a href='#fig1'>Figure 1</a> shows the plots of the data of the angle between 80 and 100.
+The red lines indicate top and bottom envelopes, and an average of the data. 
+For SADA data, all lines are estimated by a 4th degree polynomial fits to  a 10 day moving box.
+The top envelope is the polynomial fits for the maximum values of each 10 day period, the bottom
+envelope is that of the minimum, and the middle line is that of the average.
+</p>
+<p>
+For the solar arrays, a model of a linear fit plus sine function plus an exponential decay is used to estimate 
+the average fit. The envelopes are set to 4 sigma away from the center line. The sine wave is 
+induce by direct solar heating which is maximal in January when the Earth is closest to 
+the Sun.
+</p>
+
+
+<p style="padding-bottom:20px">
+The green lines indicate the upper and lower limits of the MTA safe operation range. 
+</p>
+
+<div style='text-align:center;;margin-left:auto;margin-right;auto;padding-bottom:20px'>
+<a id='fig1'>
+<strong>Figure 1: Solar Panel Temperature Evolution (Solar Angle = 80 - 100 degree)</strong>
+</a>
+<br />
+<img src='./Plots/solar_panel_angle80.gif' alt='solar panel angle: 80 degree' style='width:800px;height:600px'>
+</div>
+
+
+<p>
+The lower envelopes of both + and - Y solar arrays are crossing the lower operation limits,
+but the envelopes may be inflated by the outliers (see the next paragraph).
+<a href='./plotting_page1.html', target='_blank'>Other solar angle intervals</a>,
+appear to stay in the operational ranges in foreseeable future.
+</p>
+
+<p>
+Note that the solar panel temperature drops to 304K semi-regularly every 6 months or so
+(some cases 3 months, and in other cases, 1 year) for a very short time (up to 2 hrs).
+This occurs during the Earth eclipse seasons when the tempearature is expected to go down.  
+One example is plotted on <a href='#fig2'>Figure 2</a>.  The green vertial lines indicate 
+the timing of the eclipes.
+</p>
+
+<p style='padding-bottom:20px'>
+The data with the solar angles 80 to 100 and 100 to 120 shows more 
+of these temperature drops than the other periods, and this could be a cause of the inflated 
+envelopes. 
+</p>
+
+<div style='text-algin:center;margin-left:auto;margin-right;auto;padding-bottom:20px'>
+<a id='fig2'>
+<strong>Figure 2: Earth Eclipse Effects on Solar Array</strong>
+</a>
+<br />
+<img src='./Plots/eclipse.gif'  alt='eclipse plot' style='width:500px;height:400px'>
+</div>
+
+
+
+<p style='padding-bottom:20px'>
+If you like to see plots with other solar angles, please go to
+<a href='./plotting_page1.html' target='_blank'>Solar Panel Temperature Evolution Page</a>.
+</p>
+
+
+<h3>Spacecraft Electric Power and Solar Angle</h3>
+<p>
+Similar plots are made for spacecraft bus current/voltage (ELBI/ELBV), and electric power
+(HRMA power/OBA power). The currents is in Amp., voltage is Volts, and the power is in Watts.
+<a href='#fig3'>Figure 3</a> shows the plots of these quantities  of the solar angle interval 
+between 80 and 100.
+As before, the red lines are the envelopes and the averages obtained by the polynomial fits, 
+except for ELBV, in which the average is computed by  a linear/sine function combination. Again, 
+the fitting was done only for data after year 2003 for ELBV. 
+</p>
+
+<p>
+The green lines indicate the  operational ranges, but for HRMA and OBA power, the operational 
+ranges are far beyond the plotting ranges, and do not show up in these plots.
+</p>
+
+<div style='text-align:center;margin-left:auto;margin-right:auto;padding-bottom:20px'>
+<a id='fig3'>
+<strong>Figure 3: Spacecraft Electric Power Evolution (Solar Angle = 80 - 100 degree)</strong>
+</a>
+<br />
+<img src='./Plots/scelec_angle80.gif' alt='scelec angle 80deg' style='width:800px;height:600px'>
+</div>
+
+
+<p>
+ELBV in all solar angle ranges have downward trends, and it seems that  eventually they will 
+cross the lower operational limit. 
+<!-- ****  UPDATE this prediction ******
+ELBV with the solar angle between 80 and 120 range probably 
+will cross the lower operational limit by year 2010.
+-->
+</p>
+
+<p>
+If you like to see plots with other solar angles, please go to
+<a href='./plotting_page2.html' target='_blank'>Spacecraft Electric Power Temperature Evolution Page</a>.
+</p>
+
+<h3 style='padding-top:10px'>ELBI and SADA Temperature</h3>
+
+<p style='padding-bottom:10px'>
+Spacecraft electric powers are obiviously related to the solar panel efficiency, and hence the 
+temperature of the solar panels. 
+<a href='#fig4'>Figure 4</a> shows the spacecraft bus current agaist +Y SASA temperature. 
+</p>
+
+< div style='text-align:center;margin-left:auto;margin-right:auto;padding-bottom:20px'>
+<a id='fig4'>
+<strong>Figure 4: ELBI and +SADA Temperature (Solar Angle = 80 - 100 degree)</strong>
+</a>
+<br />
+<img src='./Plots/sada_elbi_angle80.gif' alt='sada elbi angle 80deg' style='width:600px;height:600px'>
+</div>
+
+<p>
+Although the slope of the fit is about -0.3 up to the soloar angle 100,  the slope 
+significantly steepened after the solar angle 120 degree. 
+</p>
+
+<p style='padding-bottom:20px'>
+If you like to see plots with other solar angles, please go to
+<a href='./plotting_page3.html' target='_blank'>ELBI and SADA Temperature page</a>.
+</p>
+
+
+<h3>Fine Sensor Temperature and Solar Angle</h3>
+
+<p>
+Fine sensor temperatures are the other quantities may behave differently with different 
+solar angles.
+
+<a href='#fig5'>Figure 5</a> shows the plots for the fine sensor temperature of the solar angle 
+interval between 80 and 100. As before, all red lines are computed by the polynomial fits
+method and the green lines are the operational ranges.
+</p>
+
+
+<div style='text-alin:center;margin-left:auto;margin-right:auto;padding-bottom:20px'>
+<a id='fig5'>
+<strong>Figure 5: Fine Sensor Temperature Evolution (Solar Angle = 80 - 100 degree)</strong>
+</a>
+<br />
+<img src='./Plots/sensor_angle80.gif' alt ='sensor angle 80deg' style='width:800px;height:450px'>
+</div>
+
+
+<p>
+Although there are several temperature measures on the fine sensors, FFS brackets 
+(TFSSBKT1/TFSSBKT2) and FSSE temperature (TPC_FSSE) are only measures which show 
+a significant upward drift. 
+No power related quantities (e.g., AFSSPC1V---FSS power converter voltage) 
+show any signs of the drift.
+</p>
+
+<p>
+The upper envelopes, and, in some cases, the averages of all three measures  are crossing 
+the upper operational limits as early as year 2003, and keep rising. 
+</p>
+
+<p style='padding-bottom:20px'>
+If you like to see plots with other solar angles, please go to
+<a href='./plotting_page4.html' target='_blank'>Fine Sensor Temperature Evolution Page</a>.
+</p>
+
+
+
+<hr />
+<p style='padding-top:10px'>
+Last Update: Thu Aug  2 08:41:41 EDT 2012
+</p>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br><br>
+If you have any questions about this page, please contact 
+<a href='mailto:tisobe@cfa.harvard.edu'>isobe@head.cfa.harvard.edu</a>.

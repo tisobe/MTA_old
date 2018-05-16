@@ -1,0 +1,6 @@
+'/data/mta2/isobe/Git/Limit_table/house_keeping/'          :house_keeping
+'/data/mta2/isobe/Git/Limit_table/'                        :bin_dir
+'/data/mta2/isobe/Git/Limit_table/Plots/'                  :plot_dir
+'/data/mta2/isobe/Git/Limit_table/Data/'                   :data_dir
+'/data/mta/Script/Python_script/'                          :mta_dir
+'./'                                                       :html_dir

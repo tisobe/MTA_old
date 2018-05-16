@@ -1,0 +1,5 @@
+rm -rf param
+mkdir param
+
+/data/mta/Script/ACIS/SIB/Correct_excess/Sib_corr/create_sib_data.py Lev2
+

@@ -1,0 +1,9 @@
+source  /home/mta/.ascrc -r /home/ascds/DS.test
+
+setenv PYTHONPATH "/proj/sot/ska/arch/x86_64-linux_CentOS-5/lib/python2.7/site-packages:$PYTHONPATH"
+
+/data/mta/Script/Limit_table/Scripts/limitTableCreate.py
+
+chgrp mtagroup /data/mta/www/mta_limit_table/Plots/*/*
+chgrp mtagroup /data/mta/www/mta_limit_table/Data/*
+chgrp mtagroup /data/mta/www/mta_limit_table/*.html

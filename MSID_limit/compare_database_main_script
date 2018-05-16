@@ -1,0 +1,6 @@
+
+cd /data/mta/Script/MSID_limit
+
+source /proj/sot/ska/bin/ska_envs.csh
+
+/data/mta/Script/MSID_limit/compare_database_and_update.py

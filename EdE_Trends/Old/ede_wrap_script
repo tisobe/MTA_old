@@ -1,0 +1,2 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/Grating/EdE/EdE_Trends/ede_main_script
+

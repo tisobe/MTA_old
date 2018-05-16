@@ -1,0 +1,6 @@
+house_keeping /data/mta/Script/Sol_panel_linux/house_keeping/
+script_dir	/data/mta/Script/Sol_panel_linux/Script/
+data_dir	/data/mta/Script/Sol_panel_linux/Data/
+html_dir	/data/mta/www/mta_sol_panel_linux/
+main_dir	/data/mta/Script/Sol_panel_linux/
+op_dir		/proj/sot/ska/bin/

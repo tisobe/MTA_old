@@ -1,0 +1,20 @@
+setenv HEADAS /soft/lheasoft/headas/x86_64-pc-linux;
+source $HEADAS/headas-init.csh
+
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+
+source /home/mta/bin/reset_param
+
+set path = (/home/ascds/DS.release/bin/  $path)
+set path = (/home/ascds/DS.release/ots/bin/ $path)
+
+/usr/local/bin/perl /data/mta/Script/ACIS/Acis_sci_run/Acis_sci_run/acis_sci_run_get_data.perl
+/usr/local/bin/perl /data/mta/Script/ACIS/Acis_sci_run/Acis_sci_run/acis_sci_run_plot_long_term.perl
+
+rm -rf ./Working_dir ./param
+
+chgrp mtagroup /data/mta_www/mta_acis_sci_run/* /data/mta_www/mta_acis_sci_run/Year*/*
+

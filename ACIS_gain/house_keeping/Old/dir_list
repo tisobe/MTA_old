@@ -1,0 +1,5 @@
+gain_out   	/data/mta/www/mta_acis_gain/
+cti_dir    	/data/mta/Script/ACIS/CTI/Data/
+focal_temp 	/data/mta/Script/ACIS/Focal/Short_term/
+op_dir		/usr/local/bin/
+house_keeping	/data/mta/Script/ACIS/Gain/house_keeping/

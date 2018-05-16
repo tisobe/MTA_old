@@ -1,0 +1,10 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/usr/bin/perl /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/abs_pointing_test_prep.perl 
+
+/usr/bin/perl /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/abs_pointing_main.perl test
+

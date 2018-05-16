@@ -1,0 +1,20 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+mkdir /data/mta/Script/ALIGNMENT/Sim_twist/Test_out
+mkdir /data/mta/Script/ALIGNMENT/Sim_twist/Test_out/mta_sim_twist
+mkdir /data/mta/Script/ALIGNMENT/Sim_twist/Test_out/Data
+
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_update_html.perl       test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract.perl           test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_plot_only.perl test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_acadata.perl   test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_remove_dupl.perl       test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_fid_trend_plots.perl   test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_year_plot.perl test
+/usr/local/bin/perl /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_extract_qtr_plot.perl  test
+
+rm -rf /data/mta/Script/ALIGNMENT/Sim_twist/Exec/Sim_twist_temp/*

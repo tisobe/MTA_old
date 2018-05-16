@@ -1,0 +1,17 @@
+source /home/mta/.ascrc -r /proj/cm/Release/install.linux64.DS10
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+unsetenv PERLLIB
+unsetenv PERL5LIB
+
+
+setenv MTA_REPORT_DIR  /data/mta/Script/ACIS/CTI_linux/Exc/Temp_comp_area
+
+/usr/local/bin/perl /data/mta/Script/ACIS/CTI_linux/ACIS_CTI/acis_cti_run_all_script.perl test
+
+chgrp mtagroup /data/mta/Script/ACIS/CTI/Data/* /data/mta/Script/ACIS/CTI/Data/*/* 
+chgrp mtagroup /data/mta/Script/ACIS/CTI/house_keeping/*
+chgrp mtagroup /data/mta_www/mta_temp/mta_cti/* /data/mta_www/mta_temp/mta_cti/*/*

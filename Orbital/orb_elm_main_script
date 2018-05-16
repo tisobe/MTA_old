@@ -1,0 +1,11 @@
+source /home/mta/.ascrc
+
+rm -rf param
+mkdir param
+
+source /home/mta/bin/reset_param
+
+perl /data/mta/MTA/bin/orb_elm_get_orb.perl
+perl /data/mta/MTA/bin/orb_elm_create_rdb_file.perl
+
+perl /data/mta/Script/Orbital/Orbital/clean_up.perl 

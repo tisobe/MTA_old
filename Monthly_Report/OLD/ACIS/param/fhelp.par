@@ -1,0 +1,7 @@
+task,s,a,"fcopy",,,"Name of FTOOLS task"
+path,s,h,"/proj/cm/DS.ots/ftools.v4.2.SunOS5.6/help/",,,"Path to Help Files"
+nrows,i,h,22,1,80,"Number of rows in a page"
+outfile,s,h,"STDOUT",,,"Name of optional output file"
+clobber,b,h,no,,,"Overwrite existing output file?"
+more,s,a,"yes",,,"More?"
+mode,s,h,"ql",,,""

@@ -1,0 +1,3 @@
+root_dir     /data/mta/www/mta_acis_sci_run_test/                   #--- acis sci run main directory
+bin_dir      /data/mta/Script/Test/Acis_sci_run/Acis_sci_run_test/  #--- a directory which holds scripts
+bin_data_dir /data/mta/MTA/data/Acis_sci_run                        #--- a directory which holds bin data

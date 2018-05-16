@@ -1,0 +1,13 @@
+source /home/mta/.ascrc 
+
+cd /data/mta/Script/Exposure/Exc
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+setenv PFILES "${PDIRS}:${SYSPFILES}" 
+
+perl /data/mta/MTA/bin/hrc_dose_set_dir.perl
+
+perl /data/mta/MTA/bin/hrc_dose_copy_data_to_may.perl
+
+rm dir_list*

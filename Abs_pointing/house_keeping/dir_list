@@ -1,0 +1,6 @@
+bin_dir         /data/mta/Script/ALIGNMENT/Abs_pointing/Abs_pointing/
+bdata_dir       /data/mta/MTA/data/
+web_dir         /data/mta/www/mta_aiming/
+data_dir        /data/mta/Script/ALIGNMENT/Abs_pointing/Data/
+house_keeping   /data/mta/Script/ALIGNMENT/Abs_pointing/house_keeping/
+op_dir          /usr/bin/

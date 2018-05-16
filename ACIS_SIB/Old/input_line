@@ -1,0 +1,8 @@
+operation=browse
+dataset=flight
+detector=acis
+level=1
+filetype=evt1
+tstart=02/22/10,00:00:00
+tstop=02/28/10,00:00:00
+go

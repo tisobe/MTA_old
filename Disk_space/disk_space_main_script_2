@@ -1,0 +1,13 @@
+setenv HEADAS /soft/lheasoft/headas/x86_64-pc-linux;
+source $HEADAS/headas-init.csh
+
+source /home/mta/.ascrc
+
+/usr/bin/perl /data/mta/MTA/bin/disk_space_plot_fig.perl
+
+chgrp mtagroup /data/mta_www/mta_disk_space/Figs/*
+
+chgrp mtagroup  /data/mta/Script/Disk_check/Data/*
+
+chgrp mtagroup  /data/mta/Script/Disk_check/Exc/*
+

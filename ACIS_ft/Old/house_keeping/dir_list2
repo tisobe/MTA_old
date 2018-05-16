@@ -1,0 +1,10 @@
+bin_dir     	/data/mta/Script/ACIS/Focal/Acis_ft2/
+data_dir    	/data/mta/MTA/data/
+web_dir     	/data/mta/www/mta_temp/mta_fp_ds10/
+house_keeping   /data/mta/Script/ACIS/Focal/house_keeping/
+data_out    	/data/mta/Script/ACIS/Focal/Data2/
+short_term  	/data/mta/Script/ACIS/Focal/Short_term2/
+op_dir		    /usr/local/bin/
+
+
+

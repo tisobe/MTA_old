@@ -1,0 +1,398 @@
+
+###################
+Script Descriptions
+###################
+
+NOTE: input and output directory used here could be different form actual ones. please see below.
+
+----------------------------
+acis_cti_run_all_script.perl
+----------------------------
+This script runs all other perl scripts related cti computation. The first section define 
+several directory locations.
+
+#########################################
+#--- set directories
+#
+$bin_dir:	/data/mta/MTA/bin/
+$bin_data:	/data/mta/MTA/data/
+$cti_weww:	/data/mta/www/mta_cti/
+$data_dir:	/data/mta/Script/ACIS/CTI/Data/
+$house_keeping:	/data/mta/Script/ACIS/CTI/house_keeping/
+$exc_dir: 	/data/mta/Script/ACIS/CTI/Exc/
+~
+
+#
+#########################################
+
+This script also create a temporary directory "Working_dir" under $exc_dir. Working_dir and everything in
+will be deleted at the end of the computation.
+
+--------------------
+acis_cti_wrap_script		
+--------------------
+
+A wrap script calling acis_cti_plot_script
+
+
+--------------------
+acis_cti_plot_script		
+--------------------
+
+A main script to run acis_cti_run_all_script.perl
+This script also initialize all parameters.
+
+-----------------------------
+acis_cti_find_new_entry.perl
+-----------------------------
+This script finds newly logged data from /data/mta/www/mp_reports/photons/acis/cti/6*
+					 /data/mta/www/mp_reports/photons/acis/cti/5*
+and make a list of new entries + unprocessed data.
+
+Input:
+	/data/mta/www/mp_reports/photons/acis/cti/6*:   a list of processed data
+	/data/mta/www/mp_reports/photons/acis/cti/5*:   a list of processed data
+	/data/mta/www/mta_cti/hosue_keeping/input_list: a list of all entries from begining 
+	/data/mta/www/mta_cti/hosue_keeping/keep_entry: a list of previously logged entries but
+							      were not processed becasue they were not in 
+							      data archive yet.
+
+Output:
+	$exc_dir/Working_dir/new_entry:  a list of new and unprocessed entries
+	$exc_dir/Working_dir/input_list: a list of all entries from begining updated
+
+----------------------
+acis_cti_get_data.perl
+----------------------
+This script attempts to obtain data of un-processed data in the previous run from the data archive
+
+Input:
+	.dare: 			user name	
+	.hakama:		pass word
+			---- these are kept in /data/mta4/MTA/data
+	/data/mta/Script/ACIS/CTI/Exc/Working_dir/list:	list of obsids
+
+Output:
+	$exc_dir/Exc/Working_dir/<acis evt1 fits file>
+	$house_keepingkeep_entry:  a list of entries which are not in data archive
+								at this moment. keep for the future process
+
+
+----------------------------------
+acis_cti_find_time_temp_range.perl
+----------------------------------
+This scripts does two things:
+	1. find focal temp for a given acis evt1 file
+	2. create a list of time range for different temperature
+The scond process uses the output from the first process (Working_dir/ztemp_input). 
+	
+Input: 
+	$exc_dir/Working_dir/acisf*fits:  acis evt1 data
+	/data/mta/Script/Focal/Short_term:		       focal temp data
+
+Output:
+	./Working_dir/ztemp_range_list:		a list of temp range
+		format: <obsid> <temperature>  <start_time> <end_time>	<time span>
+
+-------------------------
+acis_cti_manual_cti.perl
+-------------------------
+This script computes cti for a given acis evt1 data for a given time range.
+	1. disect an acis evt1 file into several smaller fits files according to 
+	   temperature.
+	2. use mta cti pipe process, creates cti related products
+		directry: /data/mta/Script/ACIS/CTI/Exc/Temp_comp_area/photons/
+				acis/cti/$msid*/ccd*/ccd*.html
+	3. extract cti values from the product
+
+Input:
+	$exc_dir/Working_dir/temp_file
+			this is same as ./Working_dir/ztemp_range_list
+	$exc_dir/Working_dir/acisf*$obsid*evt1.fits
+
+Output:
+	$data_dir/Results/<elm>_<ccd #>
+
+Note: 	
+	The MTA_REPORT_DIR must be specified before running this script:
+	setenv MTA_REPORT_DIR  /data/mta/Script/ACIS/CTI/Exc/Temp_comp_area
+	It is also recommended to set:
+	set path = (/home/ascds/DS.release/bin/  $path)
+
+
+----------------------------
+acis_cti_detrend_factor.perl
+----------------------------
+This script computes detrend factor using drop_amp data.
+	1. get acis evt1 expstats data from the data archive.
+	2. make an average of drop_amp value.
+	3. compute detrend factor with MIT/ACIS normalization factor 680.
+
+Input:
+	.dare:		user name
+	.hakama:	pass word
+	$exc_dir/Working_dir/new_etry:	a list of today's data
+	$exc_dir/Working_dir/keep_entry:	a list of past un-processed data
+	$exc_dir/Working_dir/amp_avg_list:	previously computed drop amp
+	$exc_dir/Working_dir/tempdir/acisf*stat*.fits: 	
+			-tempdir will be created wheile this computation si going.
+
+Output:
+	$house_keeping/amp_avg_list: a drop amp correction factors
+
+
+------------------------
+acis_cti_adjust_cti.perl
+------------------------
+This script creates several new data prducts from the cti computed.
+
+Input:
+	$data_dir/Results/<elem>_ccd<ccd #>
+
+Output:
+	$data_dir/Data119:         data with focal temp colder than -119.7
+	$data_dir/Data2000:        data with integration time no less than 2000
+	$data_dir/Data7000:        data with focal temp colder than -119.7 and 
+						 and the integration time is no less than 7000
+	$data_dir/Data_cat_adjust: data with integration time no less than 2000
+							and temp. dependency was corrected with
+							MIT/ACIS correction factors.
+
+-------------------------------
+acis_cti_comp_adjusted_cti.perl
+-------------------------------
+This script computes temperature correction factor, and applys it on data.
+	To compute the factor:
+	1. compute a linear fit for time vs cti so that we can remove a cti evolution effect
+	2. compute a linear fit for temp vs cti so that we can find a correciton factor
+	3. set intercept to zero so that the correction is zero at -119.7
+
+Input: 
+	$data_dir/Results/<elem>_ccd<ccd #>
+
+Output:
+	$data_dir/$elm_factor: 			a list of correction factors	
+	$data_dir/Data_adjust/<elem>_ccd<ccd #>:	corrected data.
+
+Note:
+	if the integration time is less than 1000 sec, drop the data
+	if the integration time is less than 2000 sec, and the observation was done after
+	Jan 2003, drop the data
+
+
+----------------------------
+acis_cti_find_outlayer.perl
+----------------------------
+This script finds outlayer data points from data sets and remove them
+
+Input:
+	$data_dir/Data*/<elm>_ccd<ccd#>
+
+Output:
+	$data_dir/Data*/dropped_data   -- a list of outlyers
+	$data_dir/Data*/bad_data_obsid -- a list of obsids of above
+
+
+------------------------
+acis_cti_plot_only.perl
+------------------------
+This script plots time vs cti evolution 
+
+Input: 
+	$data_dir/Data*/<elm>_ccd<ccd#> --- plotting data
+
+Output:
+	$cti_www/Plot*/<elm>_ccd<ccd#>_plot.gif
+	$cit_www/Plot*/fitting_result
+
+Note:
+	The plots created by this script will not displayed on the cti web page.
+	Instead, the plots created by new_plot_only.perl (see below) will be used.
+	The fitting results are displayed on the web page.
+
+Script needed: pnmcrop, pnmflip, ppmtogif: image converting script kept in /data/mta4/MTA/bin
+
+--------------------------------
+acis_cti_make_detrend_data.perl
+--------------------------------
+This script adds detrend correction and creates a new dataset
+
+Input
+-----
+	$house_keeping/amp_avg_list  --- detrend correction factors
+	$data_dir/Results/<elm>_ccd<ccd#>    --- original data
+
+Output
+------
+	$data_dir/Det_Results/<elm>_ccd<ccd#>
+
+----------------------------
+acis_cti_det_adjust_cti.perl
+----------------------------
+
+This script creates several new data prducts from the detrended cti computed.
+
+Input:
+	$data_dir/Det_Results/<elem>_ccd<ccd #>
+
+Output:
+	$data_dir/mta_cti/Det_Data119:        data with focal temp colder than -119.7
+	$data_dir/Det_Data2000:       data with integration time no less than 2000
+	$data_dir/Det_Data7000:       data with focal temp colder than -119.7 and 
+						        and the integration time is no less than 7000
+	$data_dir/Det_Data_cat_adjust: data with integration time no less than 2000
+							and temp. dependency was corrected with
+							MIT/ACIS correction factors.
+
+----------------------------
+acis_cti_new_plot_only.perl
+----------------------------
+
+This script creates plots of time vs cti evolution. 
+The difference from plot_only.perl is that this script will plot multiple
+trends on one display plotting window.
+
+Input: 
+	$data_dir/Data*/<elm>_ccd<ccd#> --- plotting data
+
+Output:
+	$cti_www/mta_cti/Data_plot/<elm>_ccd<ccd#>_plot.gif
+
+--------------------------------
+acis_cti_new_det_plot_only.perl
+--------------------------------
+
+This script creates plots of time vs  detrended cti evolution. 
+The difference from det_plot_only.perl is that this script will plot multiple
+trends on one display plotting window.
+
+Input: 
+	$data_dir/Det_Data*/<elm>_ccd<ccd#> --- plotting data
+
+Output:
+	$cti_www/Det_plot/<elm>_ccd<ccd#>_plot.gif
+
+
+------------------------------------
+acis_cti_new_det_plot_only_part.perl
+------------------------------------
+this script plots an example plot (example_ccd3_node0_mn.gif) for display.
+It plots 3 panels detrended CCD3 Node 3 data. The top plot is all data with 
+integration time > 2000 sec, the second plot is the data with integration time > 7000 sec,
+and the focal temp < -119.7C. the last one is temperature dependency corrected data.
+
+Input: 
+	$data_dir/Det_Data*/<elm>_ccd<ccd#> --- plotting data
+
+Output:
+	$cti_www/Det_plot/example_ccd3_node0_mn.gif
+
+
+
+
+#########################
+Descriptions of directory
+#########################
+
+$data_dir:
+
+Data119			cti data screened for integration time >= 2000 sec, temperature <= -119.7.
+Data2000		cti data screened for integration time >= 2000 sec.
+Data7000		cti data screened for integration time >= 7000 sec, temperature <= -119.7.
+Data_adjust		cti data screened for integration time >= 2000 sec, tempereature effect adjusted
+Data_cat_adjust		cti data screened for integration time >= 2000 sec, tempereature effect adjusted 
+			with MIT/ACIS correction factor 
+Data_elm		
+Data_plot		plots of time vs cti; multiple trends in one plotting window
+Det_Data119		detrended equivalent of Data119
+Det_Data2000		detrended equivalent of Data2000
+Det_Data7000		detrended equivalent of Data7000
+Det_Data_adjust		detrended equivalent of Data_adjust
+Det_Data_cat_adjust	detrended equivalent of Data_cat_adjust
+Det_Plot119		plots of time vs detrended cti for Det_Data119
+Det_Plot2000		plots of time vs detrended cti for Det_Data2000
+Det_Plot7000		plots of time vs detrended cti for Det_Data7000
+Det_Plot_adjust		plots of time vs detrended cti for Det_Data_adjust
+Det_Plot_cat_adjust	plots of time vs detrended cti for Det_Data_cat_adjust
+Det_Results		none-differentiated (by temp) detrended cti data
+Results			none-differentiated (by temp) cti data
+al_factor		current temperature dependency correction factors for CCDs (al K alpha).
+mn_factor		current temperature dependency correction factors for CCDs (mn K alpha).
+ti_factor		current temperature dependency correction factors for CCDs (ti K alpha).
+
+$house_keeping:
+
+Range_data		keep plotting data range
+amp_avg_list		a list of  amp average list
+cti_page.html		a proto type cti_page
+detrended_data		a list of detrend factors
+input_list		a temporary list of input data list
+keep_entry		a list of obsid list. this data will be reanalyzed later
+obsid_list		a list of obsid, temperature, start time, stop time, interval time (all sec)
+temp_file		a list of the most recent temperature list (same as above)
+
+$cti_www:
+
+cti_page.html		cti web page; this will be copied to /data/mta/www/mta_cti/Adjusted
+
+Det_plot		plot of time vs detrended cti; multiple trends in one plotting window
+Old_data		old data not used for the current computation
+Plot119			plots of time vs cti for Data119
+Plot2000		plots of time vs cti for Data2000
+Plot7000		plots of time vs cti for Data7000
+Plot_adjust		plots of time vs cti for Data_adjust
+Plot_cat_adjust		plots of time vs cti for Data_cat_adjsut
+
+
+
+
+
+Temporary directories
+----------------
+The following directoreis are created while computation 
+
+Working_dir		this directory keeps all other directories and files
+tempdir			keeps acis*stat.fits files for detrend factor computaiton (detrend_factor.perl)
+Temp_comp_area		this directory keeps temporary files such as mta cit pipe computation resutls
+
+
+
+
+
+
+
+----------------------------------
+How to use mta pipe to compute CTI
+----------------------------------
+
+from Jim's email (jpetreshock@cfa.harvard.edu)
+----------------------------------------------
+
+Not a single script or tool is used, atleast by SciOps (MTA) to calculate the 
+CTI.
+Our means to calculated this is by using the MTA CTI monitoring pipeline. 
+
+
+ 
+flt_run_pipe -i $indir  -o $outdir -r $root  -t mta_monitor_cti.ped -a 
+"genrpt=yes"
+
+
+$indir    ==  Your input directory 
+            This dir MUST contain $root_dat.lis (containing the files for which
+             you want to calculate CTI).
+$outdir  == Your output directory
+
+NOTE:  set the MTA_REPORT_DIR environment variable to the directory you
+            want to serve as your report directory; where the CTI reports will go.
+            More details are located on the webpage:
+
+                http://icxc.harvard.edu/scio/mta/run_cti_mon.html
+
+
+
+
+If you need more information on the details of how this software calculates 
+the CTI let me know.    The report pages under $MTA_REPORT_DIR will contain
+the measured CTI values.
+

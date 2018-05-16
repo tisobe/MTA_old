@@ -1,0 +1,1 @@
+TERM=dummy; export TERM; /bin/tcsh  < /data/mta/Script/ALIGNMENT/Sim_twist/Alignment_sim_twist/alignment_sim_twist_main_script

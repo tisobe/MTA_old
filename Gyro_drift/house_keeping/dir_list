@@ -1,0 +1,10 @@
+bin_dir		/data/mta/Script/Grating/Gyro/Gyro_drift/
+data_dir	/data/mta/MTA/data/
+web_dir		/data/mta/www/mta_grat/Gyro/
+result_dir	/data/mta/Script/Grating/Gyro/Result_dir/
+fig_out		/data/mta/www/mta_grat/Gyro/
+fig_dir		/data/mta/www/mta_grat/Gyro/Fig_save/
+fits_dir	/data/mta/Script/Grating/Gyro/Fits_dir/
+data_save	/data/mta/Script/Grating/Gyro/Data/
+op_dir		/usr/local/bin/
+house_keeping /data/mta/Script/Grating/Gyro/house_keeping/

@@ -1,0 +1,87 @@
+
+
+1. start arc4gl, and get a list of evt1 data for the month:
+
+        operation=browse
+        dataset=flight
+        detector=acis
+        level=1	
+(	version=last    ) -- do without this
+        filetype=evt1
+        tstart=<starting date of the month>
+        tstop=<ending data of the month>
+
+   NOTE: you may want to delay this as late as you can, since the data may not get into
+         archieve till several day after the observation.
+
+2. save the list in "list".
+
+3 run get_img_data.perl <USER> <PASS>, where <USER> is your arc4gl user name, and
+  <PASS> is your password.
+
+4. this creates img fits files. group them into about 20 each and save in files
+        NOTE: watch the process. once in a while even one file exceeds I4 bit max. level.
+              if that happens, convert the fits file with step 6 and save aside.
+
+5. rename one of the file to img_list, then run comb_img_data.perl
+   output file name is: total.fits
+
+6. change the bit system by:
+        chimgtyp total.fits out1.fits datatype=LONG
+
+7. repeat 5 and 6 for all groups, then combined out1.fits, out2.fits.... with
+   fimgmerge
+
+8. compute stat with fimgstat and comp_stat.perl
+
+
+9. Creating gif files:
+                for the entire image:
+                        saotng total_exp.fits -block 4 -winsize 720
+                        flip the image (select from scale)
+                        set color to heat, scale to histogram
+                        select save screen to gif file from "Images"
+
+                for the I3/S3
+                        saotng total_exp.fits -block 4
+                        magnify 2x
+                        pan to the chip
+                        rests are same as above
+
+
+####### OLD ########
+
+* Get a list of data
+        - arc4gl to access archive
+        - browse for acis evt1 files for the month
+        - make a list of the acis*evt1.fits of the month
+          save it in a file "list". name only (e.g.,acisf00737_000N001_evt1.fits)
+        - run dm_img.perl to get total exposure map
+          -creates image using
+            [dmcopy '*.fits[events][bin tdetx=2800:5200:1, tdety=1650:4150:1]'
+                   out*.fits option=image]
+        - copy and run comp_stat.perl to get statistics for I2/3 and S2/3.
+
+          all up-dated scripts are kept in /data/mta2/isobe/Exposure. The version in
+          pool space may not be current; so always copy scripts from
+          /data/mta2/isobe/Exposure.
+
+        Creating cumulative fits file
+                edit total_list: add the last month's image name (then add 0,0 at the end)
+                use fimgmerge:
+                        fimgmerge jul_total.fits @total_list ACIS_03_07_2000.fits
+
+        Creating gif files:
+                for the entire image:
+                        saotng total_exp.fits -block 4 -winsize 720
+                        flip the image (select from scale)
+                        set color to heat, scale to histogram
+                        select save screen to gif file from "Images"
+
+                for the I3/S3
+                        saotng total_exp.fits -block 4
+                        magnify 2x
+                        pan to the chip
+                        rests are same as above
+
+

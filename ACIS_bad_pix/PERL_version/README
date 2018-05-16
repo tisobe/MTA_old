@@ -1,0 +1,164 @@
+
+
+This directory actually contains scripts for two different purposes.
+One set of scripts finds out bad pixels on ACIS CCDs, and the other set
+computes ACIS  Bias backgrounds. These two were originally one set
+of script, and hence, they are still kept under the same script group.
+
+-----------
+directories
+-----------
+
+Bad pixel related
+-----------------
+$bin_dir:	/data/mta/MTA/bin/
+$bdata_dir:	/data/mta/MTA/data/
+$web_dir:	/data/mta/www/mta_bad_pixel/
+$exc_dir:	/data/mta/Script/ACIS/Bad_pixels/Exc/
+$data_dir:	/data/mta/Script/ACIS/Bad_pixels/Data/
+$house_keeping:	/data/mta/Script/ACIS/Bad_pixels/house_keeping/
+
+Bias related
+-------------
+$bin_dir:	/data/mta/MTA/bin/
+$bdata_dir:	/data/mta/MTA/data/
+$web_dir:	/data/mta/www/mta_bias_bkg/
+$exc_dir:	/data/mta/Script/ACIS/Bad_pixels/Exc/
+$data_dir:	/data/mta/Script/ACIS/Bad_pixels/Bias_data/
+$house_keeping:	/data/mta/Script/ACIS/Bad_pixels/house_keeping/
+
+
+------------------
+Controling Scripts
+------------------
+
+acis_bad_pix_wrap_script
+------------------------
+A script to set an tsch environment
+
+
+acis_bad_pix_main_script
+------------------------
+A script to runn all scripts
+
+
+
+
+------------------------
+ACIS Bad Pixel Detection
+------------------------
+
+acis_bad_pix_find_bad_pix.perl
+------------------------------
+This script finds bad pixels, hot pixels, and warm columns and plots the results.
+
+If "live" is given as an argument, the script reads data from /dsops/ap/sdp/cache/*/acis/*bias0.fits,
+and pick up data which had not been processed. Otherwise, you need to give a directory name 
+which contains bias0.fits files.
+
+output:                                                                 
+        $house_keeping/Defect/CCD*/                                           
+                acis*_q*_max: bad pix candidates                        
+                acis*_q*_hot: hot pix candidates                        
+        $data_dir/Disp_dir/                                              
+                all_past_bad_col*: a list of all past bad columns       
+                all_past_bad_pix*: a list of all past bad pixels        
+                all_past_hot_pix*: a list of all past hot pixels        
+                bad_col_cnt*:      a history of # of bad columns        
+                bad_pix_cnt*:      a history of # of bad pixels         
+                ccd*:              a list of today's bad pixels         
+                change_ccd*:       a history of changes of bad pixels   
+                change_col*:       a history of changes of bad columns  
+                change_hccd*:      a history of changes of hot pixels   
+                col*:              a list of today's bad columns        
+                data_used.*:       a list of data used for the CCD      
+                flickering*:       a list of flickering bad pixels      
+                flickering_col*:   a list of flickering bad columns     
+                flickering_col_save* a history of flickering columns    
+                flickering_save*:  a history of flickering pixels       
+                hccd*:             a list of today's hot pixels         
+                hflickering*:      a list of flickering hod pixels      
+                hflickering_save*  a history of flickering hot pixels   
+                hist_ccd*:         a history of changes of hot pixels   
+                hot_pix_cnt*:      a history of # of hot pixels         
+                imp_bad_col_save:  a history of changes of improved col 
+                imp_bad_pix_save*: a history of changes of improved pix 
+                imp_ccd*:          a history of improved pixels         
+                imp_hccd*:         a history of improved hot pixels     
+                imp_hot_pix_save*: a history of improved hot pix cnt    
+                new_bad_pix_save*: a history of improved bad pix cnt    
+                new_ccd*:          a history of appreared bad pix       
+                new_hccd*:         a history of appeared hot pixs       
+                new_hot_pix_save*: a history of appeared hot pix cnt    
+                today_new_col*:    a list of today's bad columns        
+                totally_new*:      a list of totally new bad pix        
+                totally_new_col*:  a list of totally new bad cols       
+        (bias)$data_dir/Bias_save/CCD*/                                        
+                quad*:  a list of time bias averge and sigma            
+        (bias)$web_dir/Plot/                                                  
+                ccd*.gif: a plot of bias background                     
+                hist_ccd*.gif:  a plot of history of # of bad pix       
+                hist_col*.gif:  a plot of history of # of bad col       
+                hist_hccd*.gif: a plot of history of # of hot pix       
+
+
+acis_bad_pix_create_data_table.perl
+-----------------------------------
+This script creates a data display html sub pages.
+
+input: 	$house_keepging/Disp_dir/ccd*			warm pixels
+	$house_keepging/Disp_dir/hccd*			hot pixels
+	$house_keepging/Disp_dir/col*			warm columns
+	$house_keepging/Disp_dir/flickering*		warm flickering pixels
+	$house_keepging/Disp_dir/hflickering*		hot flickering pixels
+	$house_keepging/Disp_dir/flickering_col*	flickering columns
+	$house_keepging/Disp_dir/all_past_bad_pix*	list of all past warm pixels
+	$house_keepging/Disp_dir/all_past_hot_pix*	list of all past hot pixels
+	$house_keepging/Disp_dir/all_past_bad_col*	list of all past warm columns
+
+output:
+	$web_dir/Html_dir/ccd_data*
+
+
+
+acis_bias_print_today_data.perl
+-------------------------------
+This script creates a list of  data needed for bias background computation 
+
+input: 	$house_keeping/past_input_data		data list created today
+	$house_keeping/past_input_data~		data list created yesterday
+
+output: ./Working_dir/today_input_data		data new for today
+
+
+acis_bias_get_info.perl
+-----------------------
+This script extracts information needed to compute bias background
+
+argument:	data list---- ./Working_dir/today_input_data 
+
+input:		today_input_data		a list of input data
+
+output:		(bias)$data_dir/Info_dir/CCD*/quad*	a data list
+					time
+					overclock
+					data mode
+					fep id
+					start row
+					row count
+					orc mode
+					dea gain
+					bias algorithm
+					bias argument 0
+					bias argument 1
+					bias argument 2
+					bias argument 3
+					bias argument 4
+
+acis_bias_html_update
+---------------------
+This script update bias background html page
+
+input:	 	bias_home.html
+
+output:		bias_home.html

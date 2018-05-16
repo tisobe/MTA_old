@@ -1,0 +1,8 @@
+source /home/mta/.ascrc 
+
+rm -rf param
+mkdir param
+source /home/mta/bin/reset_param
+
+/usr/local/bin/perl /data/mta/Script/HRC/Bkg/HRC_SIB/hrc_sib_find_shield_rate.perl test
+
